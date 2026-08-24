@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bufio"
 	"context"
 	"crypto/rand"
 	"crypto/tls"
@@ -13,6 +14,7 @@ import (
 	"io"
 	"net"
 	"net/http"
+	"net/url"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -34,6 +36,7 @@ func runHub(ctx context.Context, args []string, stdout, stderr io.Writer) error 
 	address := flags.String("addr", ":7443", "HTTPS listen address")
 	dataDir := flags.String("data-dir", defaultDataDir(), "hub data directory")
 	tlsHosts := flags.String("tls-hosts", "localhost,127.0.0.1", "comma-separated certificate DNS names or IPs")
+	publicURL := flags.String("public-url", "", "HTTPS URL endpoints use to reach this hub")
 	if err := flags.Parse(args); err != nil {
 		return err
 	}
@@ -101,7 +104,12 @@ func runHub(ctx context.Context, args []string, stdout, stderr io.Writer) error 
 	fmt.Fprintf(stdout, "Aegis hub listening on https://%s\n", listener.Addr())
 	fmt.Fprintf(stdout, "Enrollment token (single use for this run): %s\n", enrollmentToken)
 	fmt.Fprintf(stdout, "Hub CA: %s\n", filepath.Join(*dataDir, "pki", "ca.pem"))
+	fmt.Fprintf(stdout, "Hub CA SHA-256: %s\n", authority.FingerprintSHA256())
 	fmt.Fprintf(stdout, "Security MCP credential: %s\n", filepath.Join(*dataDir, "mcp-token"))
+	if *publicURL != "" {
+		fmt.Fprintf(stdout, "\nInstall an endpoint with one command:\n")
+		fmt.Fprintf(stdout, "curl -fsSL https://aegis.erzen.dev/install.sh | sh -s -- --role agent --hub %s --token %s --ca-sha256 %s\n", shellQuote(*publicURL), shellQuote(enrollmentToken), shellQuote(authority.FingerprintSHA256()))
+	}
 	err = server.Serve(tlsListener)
 	if errors.Is(err, http.ErrServerClosed) {
 		return nil
@@ -115,6 +123,7 @@ func runEnroll(ctx context.Context, args []string, stdout, stderr io.Writer) err
 	hubURL := flags.String("hub", "", "hub HTTPS URL")
 	token := flags.String("token", "", "single-use enrollment token")
 	caPath := flags.String("ca", "", "trusted hub CA PEM path")
+	caFingerprint := flags.String("ca-sha256", "", "trusted hub CA SHA-256 fingerprint")
 	deviceID := flags.String("device-id", "", "stable device identifier")
 	configPath := flags.String("config", filepath.Join(defaultDataDir(), "agent.json"), "agent configuration path")
 	if err := flags.Parse(args); err != nil {
@@ -123,10 +132,16 @@ func runEnroll(ctx context.Context, args []string, stdout, stderr io.Writer) err
 	if *deviceID == "" {
 		*deviceID, _ = os.Hostname()
 	}
-	if *hubURL == "" || *token == "" || *caPath == "" || *deviceID == "" {
-		return fmt.Errorf("--hub, --token, --ca, and a device id are required")
+	if *hubURL == "" || *token == "" || (*caPath == "" && *caFingerprint == "") || (*caPath != "" && *caFingerprint != "") || *deviceID == "" {
+		return fmt.Errorf("--hub, --token, exactly one of --ca or --ca-sha256, and a device id are required")
 	}
-	config, err := agent.Enroll(ctx, *hubURL, *token, *caPath, *deviceID)
+	var config agent.Config
+	var err error
+	if *caFingerprint != "" {
+		config, err = agent.EnrollPinned(ctx, *hubURL, *token, *caFingerprint, *deviceID)
+	} else {
+		config, err = agent.Enroll(ctx, *hubURL, *token, *caPath, *deviceID)
+	}
 	if err != nil {
 		return err
 	}
@@ -135,6 +150,60 @@ func runEnroll(ctx context.Context, args []string, stdout, stderr io.Writer) err
 	}
 	fmt.Fprintf(stdout, "enrolled %s with %s; config saved to %s\n", config.DeviceID, config.HubURL, *configPath)
 	return nil
+}
+
+func runOnboard(ctx context.Context, args []string, stdout, stderr io.Writer) error {
+	flags := flag.NewFlagSet("onboard", flag.ContinueOnError)
+	flags.SetOutput(stderr)
+	role := flags.String("role", "", "hub or agent")
+	hubURL := flags.String("hub", "", "hub HTTPS URL")
+	token := flags.String("token", "", "single-use enrollment token")
+	caFingerprint := flags.String("ca-sha256", "", "hub CA SHA-256 fingerprint")
+	publicURL := flags.String("public-url", "", "public hub HTTPS URL")
+	address := flags.String("addr", ":7443", "hub HTTPS listen address")
+	dataDir := flags.String("data-dir", defaultDataDir(), "Aegis data directory")
+	if err := flags.Parse(args); err != nil {
+		return err
+	}
+	reader := bufio.NewReader(os.Stdin)
+	if *role == "" {
+		fmt.Fprintln(stdout, "Aegis onboarding")
+		fmt.Fprint(stdout, "Protect this machine as a hub or agent? [hub/agent]: ")
+		value, _ := reader.ReadString('\n')
+		*role = strings.ToLower(strings.TrimSpace(value))
+	}
+	switch *role {
+	case "hub":
+		if *publicURL == "" {
+			fmt.Fprint(stdout, "Public HTTPS URL devices will use (optional): ")
+			value, _ := reader.ReadString('\n')
+			*publicURL = strings.TrimSpace(value)
+		}
+		hosts := "localhost,127.0.0.1"
+		if parsed, err := url.Parse(*publicURL); err == nil && parsed.Hostname() != "" {
+			hosts += "," + parsed.Hostname()
+		}
+		return runHub(ctx, []string{"--addr", *address, "--data-dir", *dataDir, "--tls-hosts", hosts, "--public-url", *publicURL}, stdout, stderr)
+	case "agent":
+		if *hubURL == "" {
+			fmt.Fprint(stdout, "Hub HTTPS URL: ")
+			value, _ := reader.ReadString('\n')
+			*hubURL = strings.TrimSpace(value)
+		}
+		if *token == "" {
+			fmt.Fprint(stdout, "Enrollment token: ")
+			value, _ := reader.ReadString('\n')
+			*token = strings.TrimSpace(value)
+		}
+		if *caFingerprint == "" {
+			fmt.Fprint(stdout, "Hub CA SHA-256 fingerprint: ")
+			value, _ := reader.ReadString('\n')
+			*caFingerprint = strings.TrimSpace(value)
+		}
+		return runEnroll(ctx, []string{"--hub", *hubURL, "--token", *token, "--ca-sha256", *caFingerprint, "--config", filepath.Join(*dataDir, "agent.json")}, stdout, stderr)
+	default:
+		return fmt.Errorf("role must be hub or agent")
+	}
 }
 
 func runAgent(ctx context.Context, args []string, stdout, stderr io.Writer) error {
@@ -341,4 +410,8 @@ func oneOf(value string, allowed ...string) bool {
 		}
 	}
 	return false
+}
+
+func shellQuote(value string) string {
+	return "'" + strings.ReplaceAll(value, "'", "'\"'\"'") + "'"
 }

@@ -9,6 +9,9 @@ This document separates implemented behavior from the production EDR roadmap.
 - Deep module interfaces for sensors, deterministic detection, fx reasoning,
   and privileged response.
 - Mutual-TLS enrollment and device-bound ingestion.
+- Fingerprint-pinned CA bootstrap for one-command remote enrollment.
+- DPAPI-sealed device and CA private material on Windows; owner-only files on
+  Linux and macOS.
 - SQLite event/finding persistence and SHA-256 audit chaining.
 - Offline event queue and hub replay.
 - Embedded responsive incident timeline.

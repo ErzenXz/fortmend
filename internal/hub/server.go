@@ -54,6 +54,7 @@ func (s *Server) routes() {
 	s.mux.HandleFunc("GET /", s.serveUI)
 	s.mux.HandleFunc("GET /healthz", s.health)
 	s.mux.HandleFunc("POST /api/v1/enroll", s.enroll)
+	s.mux.HandleFunc("GET /api/v1/ca.pem", s.caCertificate)
 	s.mux.HandleFunc("POST /api/v1/events", s.ingestEvent)
 	s.mux.HandleFunc("GET /api/v1/events", s.listEvents)
 	s.mux.HandleFunc("GET /api/v1/findings", s.listFindings)
@@ -62,6 +63,16 @@ func (s *Server) routes() {
 	if s.options.MCPToken != "" {
 		s.mux.Handle("POST /mcp", securitymcp.New(s.store, s.options.MCPToken))
 	}
+}
+
+func (s *Server) caCertificate(writer http.ResponseWriter, request *http.Request) {
+	if s.options.Authority == nil {
+		http.NotFound(writer, request)
+		return
+	}
+	writer.Header().Set("Content-Type", "application/x-pem-file")
+	writer.Header().Set("Cache-Control", "public, max-age=3600")
+	_, _ = writer.Write(s.options.Authority.CertificatePEM())
 }
 
 func (s *Server) health(writer http.ResponseWriter, _ *http.Request) {

@@ -1,10 +1,13 @@
 /bin/
 /dist/
 /.cache/
+/.vercel/
+**/.vercel/
 /.DS_Store
 *.db
 *.db-shm
 *.db-wal
+/*.exe
 events.jsonl
 agent.json
 third_party/fx/.zig-cache/

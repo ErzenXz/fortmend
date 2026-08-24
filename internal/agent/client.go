@@ -3,9 +3,13 @@ package agent
 import (
 	"bytes"
 	"context"
+	"crypto/sha256"
+	"crypto/subtle"
 	"crypto/tls"
 	"crypto/x509"
+	"encoding/hex"
 	"encoding/json"
+	"encoding/pem"
 	"fmt"
 	"io"
 	"net/http"
@@ -17,6 +21,7 @@ import (
 
 	"github.com/ErzenXz/aegis/internal/model"
 	"github.com/ErzenXz/aegis/internal/pki"
+	"github.com/ErzenXz/aegis/internal/secret"
 )
 
 type Config struct {
@@ -37,6 +42,54 @@ func Enroll(ctx context.Context, hubURL, token, caPath, deviceID string) (Config
 	if err != nil {
 		return Config{}, fmt.Errorf("read hub CA: %w", err)
 	}
+	return enrollWithCA(ctx, hubURL, token, deviceID, caPEM)
+}
+
+func EnrollPinned(ctx context.Context, hubURL, token, caFingerprint, deviceID string) (Config, error) {
+	if _, err := url.ParseRequestURI(hubURL); err != nil || !strings.HasPrefix(hubURL, "https://") {
+		return Config{}, fmt.Errorf("hub must be a valid https URL")
+	}
+	expected, err := hex.DecodeString(strings.ToLower(caFingerprint))
+	if err != nil || len(expected) != sha256.Size {
+		return Config{}, fmt.Errorf("CA fingerprint must be a 64-character SHA-256 hex value")
+	}
+	transport := &http.Transport{TLSClientConfig: &tls.Config{
+		InsecureSkipVerify: true, // The fetched certificate is authenticated by the required SHA-256 fingerprint below.
+		MinVersion:         tls.VersionTLS13,
+	}}
+	client := &http.Client{Transport: transport, Timeout: 30 * time.Second}
+	request, err := http.NewRequestWithContext(ctx, http.MethodGet, strings.TrimRight(hubURL, "/")+"/api/v1/ca.pem", nil)
+	if err != nil {
+		return Config{}, err
+	}
+	response, err := client.Do(request)
+	if err != nil {
+		return Config{}, fmt.Errorf("fetch hub CA: %w", err)
+	}
+	defer response.Body.Close()
+	if response.StatusCode != http.StatusOK {
+		return Config{}, fmt.Errorf("fetch hub CA: %s", response.Status)
+	}
+	caPEM, err := io.ReadAll(io.LimitReader(response.Body, 64*1024))
+	if err != nil {
+		return Config{}, err
+	}
+	block, rest := pem.Decode(caPEM)
+	if block == nil || block.Type != "CERTIFICATE" || len(rest) != 0 {
+		return Config{}, fmt.Errorf("hub returned invalid CA PEM")
+	}
+	certificate, err := x509.ParseCertificate(block.Bytes)
+	if err != nil {
+		return Config{}, fmt.Errorf("parse hub CA: %w", err)
+	}
+	digest := sha256.Sum256(certificate.Raw)
+	if subtle.ConstantTimeCompare(digest[:], expected) != 1 {
+		return Config{}, fmt.Errorf("hub CA fingerprint mismatch")
+	}
+	return enrollWithCA(ctx, hubURL, token, deviceID, caPEM)
+}
+
+func enrollWithCA(ctx context.Context, hubURL, token, deviceID string, caPEM []byte) (Config, error) {
 	privateKey, csr, err := pki.NewDeviceCSR(deviceID)
 	if err != nil {
 		return Config{}, err
@@ -95,14 +148,22 @@ func SaveConfig(path string, config Config) error {
 		return err
 	}
 	payload = append(payload, '\n')
-	if err := os.WriteFile(path, payload, 0o600); err != nil {
+	sealed, err := secret.Seal(payload)
+	if err != nil {
+		return err
+	}
+	if err := os.WriteFile(path, sealed, 0o600); err != nil {
 		return err
 	}
 	return os.Chmod(path, 0o600)
 }
 
 func LoadConfig(path string) (Config, error) {
-	payload, err := os.ReadFile(path)
+	sealed, err := os.ReadFile(path)
+	if err != nil {
+		return Config{}, err
+	}
+	payload, err := secret.Open(sealed)
 	if err != nil {
 		return Config{}, err
 	}

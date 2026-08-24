@@ -3,121 +3,151 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Aegis is a self-hosted cross-platform endpoint-defense developer preview built around deterministic authority and constrained AI reasoning.">
-  <meta name="theme-color" content="#e7eef0">
-  <title>Aegis — self-hosted endpoint defense</title>
+  <meta name="description" content="Aegis is self-hosted endpoint defense where deterministic policy holds authority and AI remains a constrained investigator.">
+  <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
+  <title>Aegis — policy holds the authority</title>
   <link rel="icon" href="aegis-mark.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400..600&amp;family=Geist+Mono:wght@400..600&amp;display=swap" rel="stylesheet" referrerpolicy="no-referrer">
+  <link href="assets/vercel-brand.css" rel="stylesheet">
   <style>
-    :root {
-      --paper: #e7eef0;
-      --paper-deep: #d7e2e5;
-      --ink: #12252b;
-      --muted: #587078;
-      --rust: #b9523b;
-      --moss: #315d52;
-      --line: rgba(18, 37, 43, .18);
-      --display: "Iowan Old Style", "Palatino Linotype", Palatino, serif;
-      --body: "Avenir Next", Avenir, "Segoe UI", sans-serif;
-      --mono: "SFMono-Regular", Consolas, monospace;
-    }
-    * { box-sizing: border-box; }
-    html { scroll-behavior: smooth; }
-    body {
-      margin: 0;
-      min-height: 100vh;
-      background: var(--paper);
-      color: var(--ink);
-      font: 16px/1.55 var(--body);
-    }
-    a { color: inherit; }
-    a:focus-visible { outline: 3px solid var(--rust); outline-offset: 4px; }
-    .wrap { width: min(1180px, calc(100% - 48px)); margin: 0 auto; }
-    nav {
-      height: 82px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      border-bottom: 1px solid var(--line);
-    }
-    .brand { display: flex; align-items: center; gap: 11px; font: 700 12px/1 var(--mono); letter-spacing: .18em; text-decoration: none; text-transform: uppercase; }
-    .brand img { width: 32px; height: 36px; }
-    .nav-link { color: var(--muted); font: 600 11px/1 var(--mono); letter-spacing: .1em; text-decoration: none; text-transform: uppercase; }
-    .nav-link:hover { color: var(--rust); }
-    main { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(380px, .85fr); min-height: calc(100vh - 82px); }
-    .copy { display: flex; flex-direction: column; justify-content: center; padding: 86px 7vw 86px 0; }
-    .status { color: var(--rust); font: 700 10px/1 var(--mono); letter-spacing: .15em; text-transform: uppercase; }
-    h1 { margin: 24px 0 26px; max-width: 760px; font: 400 clamp(58px, 7.8vw, 116px)/.84 var(--display); letter-spacing: -.055em; }
-    h1 em { display: block; color: var(--moss); font-weight: 400; }
-    .lede { max-width: 590px; color: var(--muted); font-size: clamp(17px, 2vw, 21px); }
-    .actions { display: flex; flex-wrap: wrap; gap: 13px; margin-top: 38px; }
-    .button { display: inline-flex; align-items: center; min-height: 48px; padding: 0 21px; border: 1px solid var(--ink); font: 700 11px/1 var(--mono); letter-spacing: .08em; text-decoration: none; text-transform: uppercase; transition: transform .18s ease, background .18s ease, color .18s ease; }
-    .button.primary { background: var(--ink); color: var(--paper); }
-    .button:hover { transform: translateY(-2px); }
-    .button.primary:hover { background: var(--moss); }
-    .system {
-      position: relative;
-      display: grid;
-      place-items: center;
-      min-height: 620px;
-      overflow: hidden;
-      border-left: 1px solid var(--line);
-      background: var(--paper-deep);
-    }
-    .system::before { content: ""; position: absolute; width: 78%; aspect-ratio: 1; border: 1px solid var(--line); border-radius: 50%; }
-    .orbit { position: relative; width: min(390px, 75%); aspect-ratio: .9; }
-    .shield-line { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
-    .shield-line path { fill: none; stroke: var(--rust); stroke-width: 2.2; stroke-linecap: round; stroke-dasharray: 780; stroke-dashoffset: 780; animation: trace 1.8s cubic-bezier(.22,.8,.28,1) .15s forwards; }
-    .node { position: absolute; width: 11px; height: 11px; border: 2px solid var(--paper-deep); border-radius: 50%; background: var(--moss); box-shadow: 0 0 0 1px var(--moss); }
-    .node span { position: absolute; white-space: nowrap; color: var(--muted); font: 700 9px/1 var(--mono); letter-spacing: .14em; text-transform: uppercase; }
-    .detect { left: 5%; top: 29%; } .detect span { right: 20px; top: 0; }
-    .decide { right: 4%; top: 45%; } .decide span { left: 20px; top: 0; }
-    .recover { left: 49%; bottom: 2%; } .recover span { left: 50%; top: 22px; transform: translateX(-50%); }
-    .principle { position: absolute; left: 30px; right: 30px; bottom: 28px; display: flex; justify-content: space-between; gap: 24px; padding-top: 18px; border-top: 1px solid var(--line); color: var(--muted); font: 10px/1.4 var(--mono); text-transform: uppercase; }
-    .principle strong { color: var(--ink); font-weight: 700; }
-    @keyframes trace { to { stroke-dashoffset: 0; } }
-    @media (max-width: 820px) {
-      .wrap { width: min(100% - 34px, 680px); }
-      main { grid-template-columns: 1fr; }
-      .copy { min-height: 600px; padding: 72px 0; }
-      h1 { font-size: clamp(58px, 19vw, 88px); }
-      .system { min-height: 520px; border-top: 1px solid var(--line); border-left: 0; }
-      .principle { flex-direction: column; gap: 7px; }
-    }
-    @media (prefers-reduced-motion: reduce) {
-      html { scroll-behavior: auto; }
-      .shield-line path { animation: none; stroke-dashoffset: 0; }
-      .button { transition: none; }
+    .vbg-custom-brand { display: inline-flex; align-items: center; gap: var(--vbg-space-3); color: inherit; text-decoration: none; }
+    .vbg-custom-brand img { width: 32px; height: 36px; }
+    .vbg-custom-brand-name { font-weight: var(--vbg-weight-semibold); letter-spacing: -.02em; }
+    .vbg-custom-meta-link { color: var(--vbg-text-secondary); text-decoration: none; }
+    .vbg-custom-meta-link:hover { color: var(--vbg-text-primary); }
+    .vbg-custom-install { display: grid; gap: var(--vbg-space-3); margin-top: var(--vbg-space-8); }
+    .vbg-custom-command { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: var(--vbg-space-4); padding: var(--vbg-space-4); border: 1px solid var(--vbg-border-default); border-radius: var(--vbg-radius); background: var(--vbg-surface-secondary); }
+    .vbg-custom-command code { min-width: 0; overflow-x: auto; color: var(--vbg-text-primary); font: var(--vbg-weight-regular) var(--vbg-type-compact)/var(--vbg-leading-compact) "Geist Mono", monospace; white-space: nowrap; }
+    .vbg-custom-copy { min-height: 36px; padding: 0 var(--vbg-space-4); border: 1px solid var(--vbg-border-strong); border-radius: var(--vbg-radius-small); background: var(--vbg-text-primary); color: var(--vbg-surface-primary); font: var(--vbg-weight-medium) var(--vbg-type-label)/1 "Geist", sans-serif; cursor: pointer; }
+    .vbg-custom-copy:focus-visible { outline: 2px solid var(--vbg-focus); outline-offset: 2px; }
+    .vbg-custom-authority { display: grid; align-content: center; min-width: 0; padding: var(--vbg-space-8); border: 1px solid var(--vbg-border-default); }
+    .vbg-custom-flow { display: grid; gap: 0; margin: var(--vbg-space-6) 0 0; padding: 0; list-style: none; counter-reset: authority; }
+    .vbg-custom-flow li { display: grid; grid-template-columns: 34px minmax(0, 1fr); gap: var(--vbg-space-4); padding: var(--vbg-space-4) 0; border-top: 1px solid var(--vbg-border-subtle); counter-increment: authority; }
+    .vbg-custom-flow li::before { content: counter(authority, decimal-leading-zero); color: var(--vbg-text-secondary); font: var(--vbg-weight-regular) var(--vbg-type-metadata)/var(--vbg-leading-caption) "Geist Mono", monospace; }
+    .vbg-custom-flow strong { display: block; margin-bottom: var(--vbg-space-1); font-weight: var(--vbg-weight-medium); }
+    .vbg-custom-flow span { color: var(--vbg-text-secondary); }
+    .vbg-custom-ledger { width: 100%; border-collapse: collapse; }
+    .vbg-custom-ledger caption { margin-bottom: var(--vbg-space-4); color: var(--vbg-text-secondary); text-align: left; }
+    .vbg-custom-ledger th, .vbg-custom-ledger td { padding: var(--vbg-space-4) 0; border-bottom: 1px solid var(--vbg-border-subtle); text-align: left; vertical-align: baseline; }
+    .vbg-custom-ledger th { width: 31%; padding-right: var(--vbg-space-6); font-weight: var(--vbg-weight-medium); }
+    .vbg-custom-ledger td { color: var(--vbg-text-secondary); }
+    .vbg-custom-state { display: inline-flex; align-items: baseline; gap: var(--vbg-space-2); color: var(--vbg-text-primary); }
+    .vbg-custom-state::before { content: ""; width: 7px; height: 7px; border: 1px solid currentColor; border-radius: 50%; }
+    .vbg-custom-limit { max-width: 68ch; }
+    .vbg-custom-footer-brand { display: inline-flex; align-items: center; gap: var(--vbg-space-2); }
+    .vbg-custom-footer-brand img { width: 21px; height: 24px; }
+    @media (max-width: 720px) {
+      .vbg-custom-command { grid-template-columns: 1fr; }
+      .vbg-custom-copy { justify-self: start; }
+      .vbg-custom-authority { padding: var(--vbg-space-6); }
+      .vbg-custom-ledger th, .vbg-custom-ledger td { display: block; width: auto; }
+      .vbg-custom-ledger th { padding-bottom: var(--vbg-space-1); border-bottom: 0; }
+      .vbg-custom-ledger td { padding-top: 0; }
     }
   </style>
 </head>
-<body>
-  <div class="wrap">
-    <nav aria-label="Primary navigation">
-      <a class="brand" href="./"><img src="aegis-mark.svg" alt="">Aegis</a>
-      <a class="nav-link" href="https://github.com/ErzenXz/aegis">View source ↗</a>
-    </nav>
-    <main>
-      <section class="copy">
-        <div class="status">Developer preview · self-hosted</div>
-        <h1>Protect the host.<em>Constrain the agent.</em></h1>
-        <p class="lede">Cross-platform endpoint defense where deterministic policy keeps authority and AI stays in the investigator’s chair.</p>
-        <div class="actions">
-          <a class="button primary" href="https://github.com/ErzenXz/aegis#build-and-test">Build Aegis</a>
-          <a class="button" href="https://github.com/ErzenXz/aegis/blob/main/docs/IMPLEMENTATION.md">See what works</a>
+<body class="vbg-report">
+  <div class="vbg-shell">
+    <a class="vbg-skip-link" href="#main">Skip to content</a>
+    <header class="vbg-header">
+      <div class="vbg-masthead">
+        <a class="vbg-custom-brand" href="./" aria-label="Aegis home">
+          <img src="aegis-mark.svg" alt="">
+          <span class="vbg-custom-brand-name">Aegis</span>
+        </a>
+        <div class="vbg-document-meta">
+          <span class="vbg-state">Developer preview</span>
+          <a class="vbg-custom-meta-link" href="https://github.com/ErzenXz/aegis">GitHub</a>
+        </div>
+      </div>
+    </header>
+
+    <main id="main">
+      <section class="vbg-opening">
+        <div class="vbg-opening-claim">
+          <h1 class="vbg-display">The model never gets a shell.</h1>
+          <p class="vbg-lede">Aegis keeps endpoint authority inside deterministic policy. AI investigates evidence and proposes typed actions. It cannot execute arbitrary commands.</p>
+          <div class="vbg-custom-install">
+            <p class="vbg-label">Install on Linux or macOS</p>
+            <div class="vbg-custom-command">
+              <code id="install-command">curl -fsSL https://aegis.erzen.dev/install.sh | sh</code>
+              <button class="vbg-custom-copy" id="copy-install" type="button">Copy command</button>
+            </div>
+            <p class="vbg-caption">Downloads the matching signed-release asset, verifies its SHA-256 checksum, then opens guided onboarding.</p>
+          </div>
+        </div>
+
+        <aside class="vbg-opening-proof vbg-custom-authority" aria-labelledby="authority-title">
+          <h2 class="vbg-heading-20" id="authority-title">Authority stays deterministic</h2>
+          <ol class="vbg-custom-flow">
+            <li><div><strong>Detect</strong><span>Local sensors keep collecting and classifying events while offline.</span></div></li>
+            <li><div><strong>Investigate</strong><span>fx sees seven security tools, not a native shell or filesystem.</span></div></li>
+            <li><div><strong>Admit</strong><span>Confidence, recovery, health, and observation gates decide every response.</span></div></li>
+            <li><div><strong>Recover</strong><span>Idempotency and rollback remain part of the privileged execution path.</span></div></li>
+          </ol>
+        </aside>
+      </section>
+
+      <section class="vbg-section" aria-labelledby="works-title">
+        <div class="vbg-reading">
+          <h2 class="vbg-heading-24" id="works-title">What the preview does today</h2>
+          <p>These capabilities run in the public repository now. The implementation ledger keeps incomplete platform work visible.</p>
+        </div>
+        <div class="vbg-table-wrap">
+          <table class="vbg-custom-ledger">
+            <caption>Implemented behavior in the current developer preview.</caption>
+            <tbody>
+              <tr><th scope="row">Endpoint connection</th><td>Device-owned certificates, mutual TLS, certificate-bound identity, and ordered offline replay.</td></tr>
+              <tr><th scope="row">Deterministic detection</th><td>Host posture, YARA signatures, Trivy vulnerabilities, suspicious persistence, authentication anomalies, and ransomware-like file bursts.</td></tr>
+              <tr><th scope="row">Constrained reasoning</th><td>A vendored fx ACP profile with native tools disabled and exactly seven Aegis MCP tools.</td></tr>
+              <tr><th scope="row">Response admission</th><td>Deterministic evidence, confidence ≥ 0.95, 24-hour observation, recovery capability, telemetry health, idempotency, and rollback.</td></tr>
+              <tr><th scope="row">Audit and updates</th><td>SQLite retention, a SHA-256 audit chain, and Ed25519 update-manifest verification primitives.</td></tr>
+            </tbody>
+          </table>
         </div>
       </section>
-      <section class="system" aria-label="Aegis protection loop">
-        <div class="orbit" aria-hidden="true">
-          <svg class="shield-line" viewBox="0 0 400 450">
-            <path d="M200 18 370 78v132c0 105-58 181-170 222C88 391 30 315 30 210V78L200 18Z"/>
-          </svg>
-          <div class="node detect"><span>Detect</span></div>
-          <div class="node decide"><span>Decide</span></div>
-          <div class="node recover"><span>Recover</span></div>
+
+      <section class="vbg-band" data-tone="contrast" aria-labelledby="limit-title">
+        <div class="vbg-reading vbg-custom-limit">
+          <h2 class="vbg-heading-24" id="limit-title">It is not production EDR yet</h2>
+          <p class="vbg-lede">Privileged repair remains locked. Native eBPF, ETW, and Endpoint Security sensors are not complete, the Windows fx planner still has upstream portability work, and production macOS monitoring requires Apple entitlement approval.</p>
+          <p><a class="vbg-button" href="https://github.com/ErzenXz/aegis/blob/main/docs/IMPLEMENTATION.md">Read the implementation ledger</a></p>
         </div>
-        <div class="principle"><span><strong>Reasoning</strong> is untrusted</span><span><strong>Policy</strong> owns authority</span></div>
+      </section>
+
+      <section class="vbg-section" aria-labelledby="start-title">
+        <div class="vbg-reading">
+          <h2 class="vbg-heading-24" id="start-title">Start with a machine you can recover</h2>
+          <p>Run the preview in a lab, inspect the event flow, and contribute one platform adapter or recovery invariant at a time.</p>
+          <p><a class="vbg-button" href="https://github.com/ErzenXz/aegis#hub-and-enrollment">Open the setup guide</a></p>
+        </div>
       </section>
     </main>
+
+    <footer class="vbg-footer">
+      <span class="vbg-custom-footer-brand"><img src="aegis-mark.svg" alt=""><span>Aegis</span></span>
+      <span>AGPL-3.0 · Self-hosted developer preview</span>
+    </footer>
   </div>
+  <script>
+    const button = document.querySelector('#copy-install');
+    const command = document.querySelector('#install-command').textContent;
+    button.addEventListener('click', async () => {
+      try {
+        await navigator.clipboard.writeText(command);
+        button.textContent = 'Copied';
+      } catch {
+        button.textContent = 'Select command';
+        const selection = window.getSelection();
+        const range = document.createRange();
+        range.selectNodeContents(document.querySelector('#install-command'));
+        selection.removeAllRanges();
+        selection.addRange(range);
+      }
+    });
+  </script>
 </body>
 </html>

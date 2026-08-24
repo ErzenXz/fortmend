@@ -4,9 +4,11 @@ import (
 	"crypto/ecdsa"
 	"crypto/elliptic"
 	"crypto/rand"
+	"crypto/sha256"
 	"crypto/tls"
 	"crypto/x509"
 	"crypto/x509/pkix"
+	"encoding/hex"
 	"encoding/pem"
 	"fmt"
 	"math/big"
@@ -14,6 +16,8 @@ import (
 	"os"
 	"path/filepath"
 	"time"
+
+	"github.com/ErzenXz/aegis/internal/secret"
 )
 
 type Authority struct {
@@ -57,6 +61,11 @@ func NewAuthority(commonName string, now time.Time) (*Authority, error) {
 
 func (a *Authority) CertificatePEM() []byte { return append([]byte(nil), a.certPEM...) }
 
+func (a *Authority) FingerprintSHA256() string {
+	digest := sha256.Sum256(a.certificate.Raw)
+	return hex.EncodeToString(digest[:])
+}
+
 func (a *Authority) VerifyDeviceCertificate(certificate *x509.Certificate, now time.Time) (string, error) {
 	roots := x509.NewCertPool()
 	roots.AddCert(a.certificate)
@@ -90,7 +99,11 @@ func (a *Authority) Save(directory string) error {
 	if err := os.WriteFile(certPath, a.certPEM, 0o644); err != nil {
 		return err
 	}
-	if err := os.WriteFile(keyPath, pem.EncodeToMemory(&pem.Block{Type: "PRIVATE KEY", Bytes: keyDER}), 0o600); err != nil {
+	keyPayload, err := secret.Seal(pem.EncodeToMemory(&pem.Block{Type: "PRIVATE KEY", Bytes: keyDER}))
+	if err != nil {
+		return err
+	}
+	if err := os.WriteFile(keyPath, keyPayload, 0o600); err != nil {
 		return err
 	}
 	return os.Chmod(keyPath, 0o600)
@@ -101,7 +114,11 @@ func LoadAuthority(directory string) (*Authority, error) {
 	if err != nil {
 		return nil, err
 	}
-	keyPEM, err := os.ReadFile(filepath.Join(directory, "ca-key.pem"))
+	sealedKey, err := os.ReadFile(filepath.Join(directory, "ca-key.pem"))
+	if err != nil {
+		return nil, err
+	}
+	keyPEM, err := secret.Open(sealedKey)
 	if err != nil {
 		return nil, err
 	}

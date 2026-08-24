@@ -1,10 +1,12 @@
 package pki_test
 
 import (
+	"bytes"
 	"crypto/tls"
 	"crypto/x509"
 	"os"
 	"path/filepath"
+	"runtime"
 	"testing"
 	"time"
 
@@ -61,12 +63,22 @@ func TestAuthorityPersistsWithPrivateKeyPermissions(t *testing.T) {
 	if _, err := loaded.IssueDevice("device-2", time.Now().UTC()); err != nil {
 		t.Fatalf("loaded authority cannot issue: %v", err)
 	}
-	info, err := os.Stat(filepath.Join(directory, "ca-key.pem"))
+	keyPath := filepath.Join(directory, "ca-key.pem")
+	info, err := os.Stat(keyPath)
 	if err != nil {
 		t.Fatal(err)
 	}
-	if info.Mode().Perm() != 0o600 {
+	if runtime.GOOS != "windows" && info.Mode().Perm() != 0o600 {
 		t.Fatalf("private key permissions=%o", info.Mode().Perm())
+	}
+	if runtime.GOOS == "windows" {
+		contents, err := os.ReadFile(keyPath)
+		if err != nil {
+			t.Fatal(err)
+		}
+		if bytes.Contains(contents, []byte("PRIVATE KEY")) {
+			t.Fatal("Windows authority key was not sealed with DPAPI")
+		}
 	}
 }
 

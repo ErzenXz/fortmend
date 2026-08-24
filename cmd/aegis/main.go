@@ -76,6 +76,12 @@ func run(ctx context.Context, args []string, stdout, stderr io.Writer) int {
 			return 1
 		}
 		return 0
+	case "onboard":
+		if err := runOnboard(ctx, args[1:], stdout, stderr); err != nil {
+			fmt.Fprintf(stderr, "aegis onboard: %v\n", err)
+			return 1
+		}
+		return 0
 	case "help", "--help", "-h":
 		fmt.Fprint(stdout, usage)
 		return 0
@@ -129,5 +135,6 @@ Usage:
   aegis status    Show local or hub health
   aegis doctor    Check sensor and planner readiness
   aegis provider  Login, logout, or inspect an fx provider
+  aegis onboard   Guided hub or endpoint setup
   aegis version   Print version information
 `

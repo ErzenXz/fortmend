@@ -9,7 +9,7 @@
 [![License: AGPL-3.0](https://img.shields.io/badge/license-AGPL--3.0-315d52.svg)](LICENSE)
 [![Status: developer preview](https://img.shields.io/badge/status-developer%20preview-b9523b.svg)](docs/IMPLEMENTATION.md)
 
-[Homepage](https://erzenxz.github.io/aegis/) · [Implementation status](docs/IMPLEMENTATION.md) · [Third-party notices](THIRD_PARTY_NOTICES.md)
+[Homepage](https://aegis.erzen.dev/) · [Implementation status](docs/IMPLEMENTATION.md) · [Third-party notices](THIRD_PARTY_NOTICES.md)
 </div>
 
 ---
@@ -51,6 +51,18 @@ through seven typed security tools when a model provider is available.
 - Ed25519 update-manifest signing and tamper verification primitives.
 
 ## Build and test
+
+Install the latest preview and start guided onboarding:
+
+```sh
+curl -fsSL https://aegis.erzen.dev/install.sh | sh
+```
+
+Windows PowerShell:
+
+```powershell
+irm https://aegis.erzen.dev/install.ps1 | iex
+```
 
 Requirements: Go 1.25. Zig 0.16 is needed only for the vendored fx planner.
 

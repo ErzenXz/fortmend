@@ -1,7 +1,6 @@
 #!/bin/sh
 set -eu
 
-version=${AEGIS_VERSION:-0.1.0-dev}
 output=${AEGIS_DIST_DIR:-dist}
 mkdir -p "$output"
 
@@ -10,7 +9,7 @@ for target in linux/amd64 linux/arm64 darwin/amd64 darwin/arm64 windows/amd64 wi
   arch=${target#*/}
   suffix=""
   if [ "$os" = windows ]; then suffix=".exe"; fi
-  name="aegis_${version}_${os}_${arch}${suffix}"
+  name="aegis_${os}_${arch}${suffix}"
   CGO_ENABLED=0 GOOS="$os" GOARCH="$arch" go build -trimpath \
     -ldflags="-s -w" -o "$output/$name" ./cmd/aegis
 done
