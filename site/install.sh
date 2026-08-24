@@ -53,7 +53,10 @@ case ":$PATH:" in
   *) echo "Add $install_directory to PATH to run aegis directly." ;;
 esac
 
-if [ -r /dev/tty ]; then
+if [ "$#" -gt 0 ]; then
+  exec "$install_directory/aegis" onboard "$@"
+fi
+if { : </dev/tty; } 2>/dev/null; then
   exec "$install_directory/aegis" onboard "$@" </dev/tty
 fi
 echo "Run: $install_directory/aegis onboard"
