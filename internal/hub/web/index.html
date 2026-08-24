@@ -1,0 +1,161 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Aegis Incident Timeline</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --ink: #081218;
+      --slate: #15242b;
+      --slate-2: #20343d;
+      --ice: #dbeef3;
+      --mist: #8faab3;
+      --copper: #d77b4a;
+      --signal: #ff5d6c;
+      --safe: #76c7a2;
+      --rule: rgba(219, 238, 243, .13);
+      --display: "Iowan Old Style", "Palatino Linotype", serif;
+      --body: "Avenir Next", Avenir, "Segoe UI", sans-serif;
+      --mono: "SFMono-Regular", Consolas, monospace;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: var(--ink);
+      color: var(--ice);
+      font: 15px/1.45 var(--body);
+    }
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background: repeating-linear-gradient(90deg, transparent 0, transparent calc(25vw - 1px), rgba(219,238,243,.025) 25vw);
+    }
+    .shell { display: grid; grid-template-columns: 250px minmax(0, 1fr); min-height: 100vh; }
+    aside {
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      padding: 32px 26px;
+      border-right: 1px solid var(--rule);
+      background: rgba(8, 18, 24, .94);
+    }
+    .mark { display: flex; align-items: center; gap: 12px; font: 700 12px/1 var(--mono); letter-spacing: .18em; text-transform: uppercase; }
+    .shield { width: 30px; height: 34px; border: 1px solid var(--copper); clip-path: polygon(50% 0, 100% 16%, 90% 72%, 50% 100%, 10% 72%, 0 16%); background: linear-gradient(145deg, rgba(215,123,74,.28), transparent 65%); }
+    .posture { margin-top: 84px; }
+    .eyebrow { color: var(--mist); font: 10px/1.2 var(--mono); letter-spacing: .16em; text-transform: uppercase; }
+    .posture strong { display: block; margin: 12px 0 6px; color: var(--safe); font: 400 30px/1 var(--display); }
+    .posture p, .foot { color: var(--mist); font-size: 12px; }
+    .rail { margin-top: 34px; border-top: 1px solid var(--rule); }
+    .rail div { display: flex; justify-content: space-between; padding: 13px 0; border-bottom: 1px solid var(--rule); font: 11px/1 var(--mono); }
+    .rail span:last-child { color: var(--ice); }
+    .foot { position: absolute; left: 26px; bottom: 28px; right: 26px; }
+    main { padding: 48px clamp(28px, 5vw, 80px) 80px; max-width: 1500px; }
+    header { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 30px; align-items: end; padding-bottom: 30px; border-bottom: 1px solid var(--rule); }
+    h1 { margin: 0; max-width: 760px; font: 400 clamp(42px, 6vw, 84px)/.9 var(--display); letter-spacing: -.04em; }
+    h1 em { color: var(--copper); font-weight: 400; }
+    .live { display: flex; align-items: center; gap: 9px; color: var(--mist); font: 10px/1 var(--mono); letter-spacing: .12em; text-transform: uppercase; }
+    .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--safe); box-shadow: 0 0 0 5px rgba(118,199,162,.1); animation: breathe 2.4s ease-in-out infinite; }
+    @keyframes breathe { 50% { box-shadow: 0 0 0 10px rgba(118,199,162,0); } }
+    .workspace { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(280px, .7fr); gap: clamp(30px, 5vw, 80px); margin-top: 42px; }
+    h2 { margin: 0 0 22px; font: 600 11px/1 var(--mono); letter-spacing: .14em; text-transform: uppercase; color: var(--mist); }
+    .finding { position: relative; display: grid; grid-template-columns: 18px 1fr auto; gap: 18px; padding: 22px 0; border-top: 1px solid var(--rule); }
+    .finding:last-child { border-bottom: 1px solid var(--rule); }
+    .trace { position: relative; width: 9px; margin-top: 5px; }
+    .trace::before { content: ""; position: absolute; left: 4px; top: 9px; bottom: -29px; width: 1px; background: var(--rule); }
+    .trace::after { content: ""; position: absolute; width: 9px; height: 9px; border-radius: 50%; background: var(--copper); box-shadow: 0 0 0 4px rgba(215,123,74,.12); }
+    .critical .trace::after { background: var(--signal); box-shadow: 0 0 0 4px rgba(255,93,108,.13); }
+    .finding h3 { margin: 0 0 6px; font: 500 18px/1.25 var(--body); }
+    .meta { color: var(--mist); font: 10px/1.5 var(--mono); word-break: break-word; }
+    .severity { align-self: start; padding: 5px 8px; border: 1px solid var(--rule); color: var(--copper); font: 9px/1 var(--mono); letter-spacing: .1em; text-transform: uppercase; }
+    .critical .severity { color: var(--signal); border-color: rgba(255,93,108,.35); }
+    .empty { padding: 44px 0; border-block: 1px solid var(--rule); color: var(--mist); }
+    .events { border-top: 1px solid var(--rule); }
+    .event { padding: 13px 0; border-bottom: 1px solid var(--rule); }
+    .event b { display: block; font: 500 12px/1.3 var(--body); }
+    .event time { color: var(--mist); font: 9px/1 var(--mono); }
+    .error { color: var(--signal); }
+    @media (max-width: 820px) {
+      .shell { display: block; }
+      aside { position: relative; height: auto; padding: 22px; border-right: 0; border-bottom: 1px solid var(--rule); }
+      .posture { margin-top: 30px; }
+      .foot { position: static; margin-top: 24px; }
+      main { padding: 34px 22px 60px; }
+      header, .workspace { grid-template-columns: 1fr; }
+      h1 { font-size: 48px; }
+    }
+    @media (prefers-reduced-motion: reduce) { .dot { animation: none; } }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <aside>
+      <div class="mark"><span class="shield" aria-hidden="true"></span>Aegis</div>
+      <section class="posture">
+        <div class="eyebrow">Protection posture</div>
+        <strong id="posture">Observing</strong>
+        <p>Deterministic sensors remain active even when the AI planner is unavailable.</p>
+      </section>
+      <div class="rail">
+        <div><span>FINDINGS</span><span id="finding-count">—</span></div>
+        <div><span>RECENT EVENTS</span><span id="event-count">—</span></div>
+        <div><span>AUDIT LINKS</span><span id="audit-count">—</span></div>
+      </div>
+      <p class="foot">Developer preview · Deep platform sensors and autonomous repair stay locked until recovery checks pass.</p>
+    </aside>
+    <main>
+      <header>
+        <h1>Aegis Incident <em>Timeline</em></h1>
+        <div class="live"><span class="dot"></span><span id="connection">Live channel</span></div>
+      </header>
+      <div class="workspace">
+        <section>
+          <h2>Open findings</h2>
+          <div id="findings"><div class="empty">No findings yet. Enroll a device or run a local scan to begin.</div></div>
+        </section>
+        <section>
+          <h2>Event river</h2>
+          <div id="events" class="events"><div class="empty">Waiting for endpoint telemetry.</div></div>
+        </section>
+      </div>
+    </main>
+  </div>
+  <script>
+    const esc = value => String(value ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+    const when = value => new Date(value).toLocaleString();
+    async function load() {
+      try {
+        const [findings, events, audit] = await Promise.all([
+          fetch('/api/v1/findings?limit=100').then(r => r.json()),
+          fetch('/api/v1/events?limit=40').then(r => r.json()),
+          fetch('/api/v1/audit?limit=1000').then(r => r.json())
+        ]);
+        document.querySelector('#finding-count').textContent = findings.length;
+        document.querySelector('#event-count').textContent = events.length;
+        document.querySelector('#audit-count').textContent = audit.length;
+        document.querySelector('#posture').textContent = findings.some(f => f.severity === 'critical') ? 'Containment ready' : 'Observing';
+        document.querySelector('#findings').innerHTML = findings.length ? findings.map(f => `
+          <article class="finding ${esc(f.severity)}">
+            <span class="trace" aria-hidden="true"></span>
+            <div><h3>${esc(f.title)}</h3><div class="meta">${esc(f.deviceId)} · ${when(f.createdAt)}<br>${esc((f.detectorIds || []).join(' · '))}</div></div>
+            <span class="severity">${esc(f.severity)}</span>
+          </article>`).join('') : '<div class="empty">No findings yet. Enroll a device or run a local scan to begin.</div>';
+        document.querySelector('#events').innerHTML = events.length ? events.map(e => `
+          <div class="event"><b>${esc(e.kind)}</b><time>${when(e.observedAt)} · ${esc(e.source)}</time></div>`).join('') : '<div class="empty">Waiting for endpoint telemetry.</div>';
+      } catch (error) {
+        document.querySelector('#connection').textContent = 'Timeline unavailable';
+        document.querySelector('#connection').classList.add('error');
+      }
+    }
+    load();
+    const stream = new EventSource('/api/v1/stream');
+    stream.addEventListener('security_event', load);
+    stream.onerror = () => { document.querySelector('#connection').textContent = 'Reconnecting'; };
+    stream.onopen = () => { document.querySelector('#connection').textContent = 'Live channel'; };
+  </script>
+</body>
+</html>

@@ -1,0 +1,20 @@
+[Unit]
+Description=Aegis endpoint protection agent
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+ExecStart=/usr/local/bin/aegis agent --config /var/lib/aegis/agent.json
+User=root
+Restart=always
+RestartSec=5
+NoNewPrivileges=false
+ProtectHome=read-only
+PrivateTmp=true
+ProtectKernelTunables=true
+ProtectKernelModules=true
+RestrictRealtime=true
+
+[Install]
+WantedBy=multi-user.target
