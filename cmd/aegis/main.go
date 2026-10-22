@@ -31,6 +31,18 @@ func run(ctx context.Context, args []string, stdout, stderr io.Writer) int {
 		return 2
 	}
 	switch args[0] {
+	case "protect":
+		if err := runProtect(ctx, args[1:], stdout, stderr); err != nil {
+			fmt.Fprintf(stderr, "aegis protect: %v\n", err)
+			return 1
+		}
+		return 0
+	case "ai":
+		if err := runAI(ctx, args[1:], stdout, stderr); err != nil {
+			fmt.Fprintf(stderr, "aegis ai: %v\n", err)
+			return 1
+		}
+		return 0
 	case "version", "--version", "-v":
 		fmt.Fprintf(stdout, "aegis %s (fx %s)\n", aegisVersion, fxVersion)
 		return 0
@@ -130,6 +142,8 @@ const usage = `Aegis — self-hosted autonomous endpoint defense.
 Usage:
   aegis hub       Run the self-hosted hub
   aegis agent     Run the endpoint protection loop
+  aegis protect   Run Ubuntu/Debian monitoring, updates and autonomous repair
+  aegis ai        Sign in to ChatGPT or inspect Codex account status
   aegis enroll    Enroll this device with a hub
   aegis scan      Run a local developer-preview scan
   aegis status    Show local or hub health

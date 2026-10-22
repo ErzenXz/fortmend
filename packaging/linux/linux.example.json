@@ -1,0 +1,18 @@
+{
+  "schemaVersion": "aegis.linux/v1",
+  "deviceId": "",
+  "stateDir": "/var/lib/aegis/protection",
+  "pollSeconds": 5,
+  "assessmentMinutes": 60,
+  "securityUpdates": true,
+  "automaticReboot": false,
+  "autoQuarantine": true,
+  "webRoots": ["/var/www/html"],
+  "healthServices": ["ssh.service"],
+  "ai": {
+    "enabled": true,
+    "mode": "full-control",
+    "binary": "/usr/local/bin/codex",
+    "workDir": "/"
+  }
+}

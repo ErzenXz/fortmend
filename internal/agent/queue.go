@@ -16,7 +16,9 @@ type Queue struct {
 	path     string
 	maxBytes int64
 	mu       sync.Mutex
+	drainMu  sync.Mutex
 	events   []model.SecurityEvent
+	bytes    int64
 }
 
 func OpenQueue(path string, maxBytes int64) (*Queue, error) {
@@ -40,6 +42,11 @@ func OpenQueue(path string, maxBytes int64) (*Queue, error) {
 			return nil, fmt.Errorf("decode offline queue: %w", err)
 		}
 		queue.events = append(queue.events, event)
+		encoded, err := json.Marshal(event)
+		if err != nil {
+			return nil, err
+		}
+		queue.bytes += int64(len(encoded) + 1)
 	}
 	return queue, scanner.Err()
 }
@@ -53,42 +60,77 @@ func (q *Queue) Len() int {
 func (q *Queue) Push(event model.SecurityEvent) error {
 	q.mu.Lock()
 	defer q.mu.Unlock()
+	payload, err := json.Marshal(event)
+	if err != nil {
+		return err
+	}
+	payload = append(payload, '\n')
+	if q.bytes+int64(len(payload)) > q.maxBytes {
+		return fmt.Errorf("offline queue capacity exhausted; event was not accepted")
+	}
+	// Appending one durable record avoids rewriting the entire backlog for every
+	// CVE observation in a large inventory. Compaction happens during delivery.
+	if err := os.MkdirAll(filepath.Dir(q.path), 0700); err != nil {
+		return err
+	}
+	f, err := os.OpenFile(q.path, os.O_CREATE|os.O_APPEND|os.O_WRONLY, 0600)
+	if err != nil {
+		return err
+	}
+	st, err := f.Stat()
+	if err != nil {
+		f.Close()
+		return err
+	}
+	if _, err = f.Write(payload); err == nil {
+		err = f.Sync()
+	}
+	if err != nil {
+		_ = f.Truncate(st.Size())
+		_ = f.Sync()
+		_ = f.Close()
+		return err
+	}
+	if err := f.Close(); err != nil {
+		return err
+	}
 	q.events = append(q.events, event)
-	for q.encodedSize() > q.maxBytes && len(q.events) > 1 {
-		q.events = q.events[1:]
-	}
-	if q.encodedSize() > q.maxBytes {
-		q.events = q.events[:0]
-		return fmt.Errorf("event exceeds offline queue capacity")
-	}
-	return q.persist()
-}
-
-func (q *Queue) Drain(ctx context.Context, send func(context.Context, model.SecurityEvent) error) error {
-	q.mu.Lock()
-	defer q.mu.Unlock()
-	for len(q.events) > 0 {
-		if err := ctx.Err(); err != nil {
-			return err
-		}
-		if err := send(ctx, q.events[0]); err != nil {
-			return err
-		}
-		q.events = q.events[1:]
-		if err := q.persist(); err != nil {
-			return err
-		}
-	}
+	q.bytes += int64(len(payload))
 	return nil
 }
 
-func (q *Queue) encodedSize() int64 {
-	var size int64
-	for _, event := range q.events {
+func (q *Queue) Drain(ctx context.Context, send func(context.Context, model.SecurityEvent) error) error {
+	q.drainMu.Lock()
+	defer q.drainMu.Unlock()
+	for {
+		if err := ctx.Err(); err != nil {
+			return err
+		}
+		q.mu.Lock()
+		if len(q.events) == 0 {
+			q.mu.Unlock()
+			return nil
+		}
+		event := q.events[0]
+		q.mu.Unlock()
+		// Network delivery must never hold the collection lock.
+		if err := send(ctx, event); err != nil {
+			return err
+		}
+		q.mu.Lock()
+		previous := q.events
+		previousBytes := q.bytes
+		q.events = q.events[1:]
 		payload, _ := json.Marshal(event)
-		size += int64(len(payload) + 1)
+		q.bytes -= int64(len(payload) + 1)
+		if err := q.persist(); err != nil {
+			q.events = previous
+			q.bytes = previousBytes
+			q.mu.Unlock()
+			return err
+		}
+		q.mu.Unlock()
 	}
-	return size
 }
 
 func (q *Queue) persist() error {

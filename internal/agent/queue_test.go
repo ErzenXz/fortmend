@@ -35,3 +35,36 @@ func TestOfflineQueueRetainsFailedEventsAndDrainsInOrder(t *testing.T) {
 		t.Fatalf("sent=%v remaining=%d", sent, queue.Len())
 	}
 }
+
+func TestQueueFullDoesNotDiscardAcceptedSecurityEvidence(t *testing.T) {
+	path := filepath.Join(t.TempDir(), "events.jsonl")
+	q, err := agent.OpenQueue(path, 512)
+	if err != nil {
+		t.Fatal(err)
+	}
+	first := model.SecurityEvent{ID: "first", Kind: "vulnerability.detected", ObservedAt: time.Now()}
+	if err := q.Push(first); err != nil {
+		t.Fatal(err)
+	}
+	for i := 0; i < 20; i++ {
+		if err := q.Push(model.SecurityEvent{ID: "later", Kind: "host.inventory", ObservedAt: time.Now()}); err != nil {
+			break
+		}
+	}
+	reopened, err := agent.OpenQueue(path, 512)
+	if err != nil {
+		t.Fatal(err)
+	}
+	var firstID string
+	if err := reopened.Drain(context.Background(), func(_ context.Context, e model.SecurityEvent) error {
+		if firstID == "" {
+			firstID = e.ID
+		}
+		return nil
+	}); err != nil {
+		t.Fatal(err)
+	}
+	if firstID != "first" {
+		t.Fatal("accepted finding was silently evicted")
+	}
+}

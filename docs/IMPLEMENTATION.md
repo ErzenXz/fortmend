@@ -2,6 +2,21 @@
 
 This document separates implemented behavior from the production EDR roadmap.
 
+## Ubuntu/Debian autonomous VM core
+
+`aegis protect` now implements a separate local Linux control path. It includes
+official-vendor installed-source-package CVE checks, security-only APT updates,
+live SSH journals with cursor-gap recovery, persistence/PHP file monitoring,
+recoverable webshell quarantine, and managed Codex app-server authentication.
+An explicit full-control policy grants native root host tools for application
+investigation/repair. Fresh assessments and health checks distinguish verified
+original findings from unresolved findings; no result asserts a clean host.
+
+See [Linux setup, operational limits and recovery](LINUX.md). This core is
+intended for Ubuntu/Debian systemd VMs. Container packaging, fleet coordination,
+comprehensive EDR telemetry, hypervisor snapshots and guaranteed package rollback
+are not implemented. The legacy cross-platform response MCP remains locked.
+
 ## Implemented developer-preview slice
 
 - Versioned event, finding, evidence, case, response, receipt, capability, and
@@ -26,14 +41,16 @@ This document separates implemented behavior from the production EDR roadmap.
 - No privileged response adapter is enabled. `request_response` and
   `simulate_response` reject in the preview because rollback has not been
   proven for a real host mutation.
-- Linux eBPF/audit/journald event streaming is not implemented.
+- Linux eBPF/audit telemetry is not implemented. The Linux core polls bounded
+  SSH journald records with durable cursors and explicit gap reporting.
 - Windows ETW/Event Log/WFP/Defender streaming and DPAPI-backed fx storage are
   not implemented.
 - macOS Endpoint Security and Network Extension targets are not implemented;
   production work also depends on Apple entitlement approval.
-- Threat-feed signing/distribution, Sigma rule compilation, quarantine storage,
-  automatic patch/reboot, account/key repair, and production updater swapping
-  remain roadmap items.
+- Signed feed distribution, Sigma rule compilation, general quarantine across
+  platforms, account/key repair, and production agent-binary swapping remain
+  roadmap items. Native Linux package updates/reboot policy and PHP quarantine
+  are implemented in the Linux core.
 - The hub has device authentication and MCP bearer authentication, but the web
   owner-login interface is not implemented. Bind it to a trusted interface only.
 

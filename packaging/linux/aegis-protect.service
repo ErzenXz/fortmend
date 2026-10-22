@@ -1,0 +1,29 @@
+[Unit]
+Description=Aegis Ubuntu/Debian security updates, attack monitoring and autonomous VM protection
+Wants=network-online.target
+After=network-online.target
+ConditionPathExists=/etc/aegis/linux.json
+StartLimitIntervalSec=300
+StartLimitBurst=5
+
+[Service]
+Type=simple
+User=root
+Group=root
+WorkingDirectory=/
+Environment=PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+Environment=HOME=/root
+Environment=LANG=C.UTF-8
+UMask=0077
+ExecStart=/usr/local/bin/aegis protect --config /etc/aegis/linux.json
+Restart=on-failure
+RestartSec=10s
+KillMode=control-group
+TimeoutStopSec=120s
+StandardOutput=journal
+StandardError=journal
+# Root host access is intentional: package updates and optional full-control AI
+# must modify host/application files. Policy and Codex login control AI activation.
+
+[Install]
+WantedBy=multi-user.target

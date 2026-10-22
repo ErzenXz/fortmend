@@ -18,10 +18,15 @@ type Policy struct {
 func DefaultPolicy() Policy {
 	return Policy{
 		DeterministicKinds: map[string]string{
-			"malware.signature_match": "Known malware signature detected",
-			"vulnerability.detected":  "Vulnerable software requires remediation",
-			"persistence.suspicious":  "Suspicious persistence change detected",
-			"authentication.anomaly":  "Suspicious authentication activity detected",
+			"malware.signature_match":  "Known malware signature detected",
+			"vulnerability.detected":   "Vulnerable software requires remediation",
+			"persistence.suspicious":   "Suspicious persistence change detected",
+			"authentication.anomaly":   "Suspicious authentication activity detected",
+			"webshell.suspicious":      "Suspicious PHP execution pattern detected",
+			"process.suspicious":       "Suspicious process activity detected",
+			"autonomy.audit_requested": "Scheduled autonomous VM security audit",
+			"response.failed":          "Automated response requires investigation",
+			"patching.failed":          "Security update or verification failed",
 		},
 		FileBurstThreshold: 50,
 		FileBurstWindow:    10 * time.Second,
