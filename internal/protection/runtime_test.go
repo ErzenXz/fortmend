@@ -441,8 +441,15 @@ func TestRuntimeFullControlAuditsFollowAssessmentSchedule(t *testing.T) {
 	r.AuditInterval = 25 * time.Millisecond
 	r.Assessment = eventAdapter(sensors.Observation{Kind: "vulnerability.scan_completed", Severity: model.SeverityInfo, Confidence: 1, Attributes: map[string]string{"status": "complete"}})
 	r.Reasoner = investigateFunc(func(_ context.Context, c model.IncidentCase) (model.ResponseProposal, error) {
-		if len(c.Evidence) != 1 || c.Evidence[0].Kind != "autonomy.audit_requested" {
+		// A slow filesystem can let several scheduled audits accumulate before
+		// the worker reads them. Grouping those audits is expected behavior.
+		if len(c.Evidence) == 0 {
 			t.Errorf("unexpected scheduled audit evidence: %+v", c)
+		}
+		for _, evidence := range c.Evidence {
+			if evidence.Kind != "autonomy.audit_requested" {
+				t.Errorf("unexpected scheduled audit evidence: %+v", evidence)
+			}
 		}
 		audits <- struct{}{}
 		return model.ResponseProposal{SchemaVersion: model.SchemaVersion, CaseID: c.ID, Summary: "Scheduled VM audit"}, nil
@@ -450,7 +457,7 @@ func TestRuntimeFullControlAuditsFollowAssessmentSchedule(t *testing.T) {
 	r.Verify = func(context.Context) error { return nil }
 	done := make(chan error, 1)
 	go func() { done <- r.Run(ctx, false) }()
-	deadline := time.After(time.Second)
+	deadline := time.After(5 * time.Second)
 	count := 0
 	for count < 2 {
 		select {

@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"runtime"
 	"strings"
 	"testing"
 	"time"
@@ -58,7 +59,10 @@ func TestJournalBurstAndRestart(t *testing.T) {
 		t.Fatalf("restart cursor missing: %v", r.args)
 	}
 	fi, err := os.Stat(filepath.Join(c.StateDir, "monitor.json"))
-	if err != nil || fi.Mode().Perm() != 0600 {
+	if err != nil {
+		t.Fatal(err)
+	}
+	if runtime.GOOS != "windows" && fi.Mode().Perm() != 0600 {
 		t.Fatalf("state permissions: %v %v", fi, err)
 	}
 }
@@ -247,6 +251,9 @@ func TestPersistenceAndDeletedFiles(t *testing.T) {
 }
 
 func TestWebshellOccurrenceRetryAndReinfection(t *testing.T) {
+	if runtime.GOOS == "windows" {
+		t.Skip("reinfection identity requires the Unix inode and change-time adapter")
+	}
 	r := &journalRunner{}
 	c := testConfig(t, r)
 	root := t.TempDir()
