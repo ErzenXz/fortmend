@@ -80,3 +80,34 @@ test runs skip all three opt-in integrations.
 Keep VM console/recovery access. Destroy disposable VMs and their test images
 after capturing results; do not reuse their intentionally modified state as a
 production installation.
+
+
+## Fortmend rename and bootstrap verification (2026-10-22)
+
+The published `v0.2.0-preview.1` release was verified with all six CI jobs passing:
+Go tests/vet/build on Linux, macOS and Windows; Linux race/root adapters; and
+native FX builds plus isolated `--fortmend` ACP initialization on Linux/macOS.
+The freshly built macOS FX artifact also passed that protocol interaction locally.
+Legacy schema, certificate identity, signed-manifest and Windows DPAPI envelope
+readers have regression coverage.
+
+The 15 bootstrap fixtures run on both macOS and Ubuntu. They cover checksums,
+architecture selection, authenticated startup, absent/failed sign-in, no-start,
+policy preservation, unsafe paths, and explicit legacy-state preservation.
+
+A disposable Ubuntu 24.04 ARM64 VM ran the public HTTPS bootstrap with
+`--no-start`, downloading the actual published assets and pinned Codex 0.163.0,
+provisioning APT prerequisites, and installing root-owned policy/binaries/unit.
+The service remained disabled/inactive, as requested. Codex account/config/thread
+protocol checks passed with an empty managed profile; no inference was sent and
+no personal ChatGPT credentials were imported.
+
+A separate service smoke on that VM used AI and package application disabled,
+started `fortmend-protect.service`, and verified quarantine of an inert PHP test
+fixture with preserved payload and receipt. This checks real renamed paths and
+systemd behavior; it does not substitute for signed-in AI repair verification.
+
+The website was checked in a real browser at desktop, 375px and 320px widths:
+anchors, install copy, all capability tabs, keyboard navigation, motion toggle,
+assets, overflow and console errors. Reduced-motion behavior was inspected in
+source; the operating system preference was not changed during this run.

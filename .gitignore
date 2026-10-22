@@ -12,3 +12,6 @@ events.jsonl
 agent.json
 third_party/fx/.zig-cache/
 third_party/fx/zig-out/
+
+/fortmend
+/.zig-cache/

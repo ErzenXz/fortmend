@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="Fortmend is an autonomous security engineer for your Ubuntu and Debian VMs. Monitor attacks, patch vulnerabilities, investigate and verify repairs.">
-  <meta name="theme-color" content="#08090b">
+  <meta name="theme-color" content="#fafafa">
   <meta property="og:title" content="Fortmend — Your server. Under watch.">
   <meta property="og:description" content="An autonomous security engineer that lives inside your Linux VM. Observe. Repair. Verify.">
   <meta property="og:type" content="website">
@@ -13,222 +13,224 @@
   <link rel="canonical" href="https://fortmend.vercel.app/">
   <link rel="icon" href="fortmend-mark.svg" type="image/svg+xml">
   <style>
-    :root { color-scheme:dark; --bg:#08090b; --ink:#f0f0f1; --muted:#97999f; --line:rgba(255,255,255,.11); --mono:ui-monospace,"SFMono-Regular",Consolas,monospace; }
+    :root { color-scheme:light; --paper:#fafafa; --ink:#212121; --muted:#686868; --line:#e2e2e2; --mono:ui-monospace,"SFMono-Regular",Consolas,monospace; }
     * { box-sizing:border-box; }
-    html { scroll-behavior:smooth; scroll-padding-top:32px; }
-    body { margin:0; background:var(--bg); color:var(--ink); font-family:Inter,"Helvetica Neue",Arial,sans-serif; -webkit-font-smoothing:antialiased; }
-    ::selection { background:#dadce1; color:#08090b; }
-    a { color:inherit; text-decoration:none; }
-    button { font:inherit; }
-    a,button { -webkit-tap-highlight-color:transparent; }
-    :focus-visible { outline:2px solid #e4e4e7; outline-offset:5px; }
-    .skip { position:fixed; top:12px; left:12px; padding:12px; background:#fff; color:#000; z-index:20; transform:translateY(-180%); }
-    .skip:focus { transform:none; }
-    .shell { width:min(1160px,calc(100% - 96px)); margin:auto; }
-    header { height:100px; display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid var(--line); }
-    .brand { display:inline-flex; align-items:center; gap:11px; font-size:21px; font-weight:600; letter-spacing:-.8px; }
-    .brand img { width:29px; height:33px; }
-    nav { display:flex; align-items:center; gap:30px; color:var(--muted); font-size:13px; }
-    nav a { transition:color .2s; }
-    nav a:hover { color:#fff; }
-    .nav-github { display:flex; align-items:center; gap:9px; color:#e4e4e7; }
-    .arrow { display:inline-block; transition:transform .2s; }
-    a:hover .arrow { transform:translate(2px,-2px); }
-    .hero { position:relative; display:grid; grid-template-columns:1.15fr 1fr; align-items:center; min-height:610px; padding:88px 0 76px; }
-    .hero-copy { position:relative; z-index:2; }
-    .eyebrow { display:flex; align-items:center; gap:9px; margin:0 0 28px; color:#b5b6bb; font:10px/1.6 var(--mono); letter-spacing:1.7px; text-transform:uppercase; }
-    .status-dot { width:5px; height:5px; background:#d9dadf; border-radius:50%; box-shadow:0 0 12px #ffffff66; }
-    h1 { margin:0; font-size:clamp(54px,6.8vw,85px); font-weight:500; line-height:1.04; letter-spacing:-5px; }
-    h1 span { color:#777b83; }
-    .hero-description { max-width:420px; margin:27px 0 29px; color:#a6a8ae; font-size:16px; line-height:1.75; }
-    .hero-actions { display:flex; align-items:center; gap:25px; font-size:13px; }
-    .button { display:inline-flex; align-items:center; justify-content:center; gap:20px; min-height:45px; padding:0 20px; border:1px solid #f1f1f3; border-radius:5px; background:#eeeef0; color:#141518; font-weight:600; transition:background .2s,box-shadow .2s; }
-    .button:hover { background:#fff; box-shadow:0 0 25px #ffffff16; }
-    .text-link { color:#b7b9bf; }
-    .text-link:hover { color:#fff; }
-    .visual { position:relative; min-width:0; height:410px; isolation:isolate; }
-    #field { position:absolute; inset:-70px -35px; width:calc(100% + 70px); height:calc(100% + 140px); opacity:.9; pointer-events:none; }
-    .orbital { position:absolute; width:240px; height:240px; top:82px; left:calc(50% - 120px); transform:rotate(-30deg) skew(10deg,10deg); border:1px solid #ffffff1c; border-radius:36px; box-shadow:0 0 90px #ffffff04,inset 0 0 60px #ffffff03; }
-    .orbital::before,.orbital::after { content:""; position:absolute; inset:24px; border:1px solid #ffffff20; border-radius:25px; }
-    .orbital::after { inset:-24px; border-color:#ffffff0b; border-radius:47px; }
-    .emblem { position:absolute; display:grid; place-items:center; width:126px; height:144px; left:calc(50% - 63px); top:132px; filter:drop-shadow(0 0 35px #ffffff18); }
-    .emblem img { width:87px; height:99px; opacity:.94; }
-    .visual-label { position:absolute; font:9px/1.6 var(--mono); color:#666b73; letter-spacing:1.3px; text-transform:uppercase; }
-    .label-top { left:21%; top:22px; }
-    .label-bottom { right:8%; bottom:20px; display:flex; align-items:center; gap:8px; }
-    .cross { position:absolute; width:9px; height:9px; background:linear-gradient(#737780,#737780) center/1px 9px no-repeat,linear-gradient(#737780,#737780) center/9px 1px no-repeat; opacity:.5; }
-    .cross.one { top:60px; right:15%; }.cross.two { bottom:58px; left:9%; }
-    .platforms { display:flex; justify-content:space-between; align-items:center; gap:20px; padding:22px 0; border-top:1px solid var(--line); border-bottom:1px solid var(--line); color:#777b83; font:10px/1.6 var(--mono); letter-spacing:.6px; }
-    .platform-list { display:flex; align-items:center; gap:25px; color:#b3b6bd; }
-    .platform-list span { white-space:nowrap; }
-    .platforms .preview { display:flex; gap:8px; align-items:center; }
-    .preview::before { content:""; height:5px; width:5px; border:1px solid #888c94; border-radius:50%; }
-    .section { padding:96px 0; }
-    .section-heading { display:flex; justify-content:space-between; align-items:end; gap:28px; margin-bottom:38px; }
-    .kicker { margin:0 0 15px; color:#777d87; font:10px/1.6 var(--mono); letter-spacing:1.5px; text-transform:uppercase; }
-    h2 { margin:0; font-size:36px; line-height:1.17; letter-spacing:-1.5px; font-weight:500; }
-    .section-intro { max-width:310px; margin:0; font-size:13px; line-height:1.8; color:var(--muted); }
-    .cards { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:14px; }
-    .card { position:relative; overflow:hidden; padding:30px 26px 29px; border:1px solid var(--line); border-radius:8px; background:linear-gradient(145deg,#11121690,#0c0d1060); transition:transform .25s,border-color .25s; }
-    .card::before { content:""; position:absolute; inset:0; pointer-events:none; background:radial-gradient(280px circle at var(--x,50%) var(--y,0%),#ffffff0b,transparent 70%); opacity:0; transition:opacity .3s; }
-    .card:hover { border-color:#ffffff30; transform:translateY(-4px); }
-    .card:hover::before { opacity:1; }
-    .card-top { display:flex; justify-content:space-between; align-items:center; margin-bottom:39px; }
-    .card-number { color:#858c97; font:10px var(--mono); letter-spacing:1px; }
-    .card-icon { width:24px; height:24px; color:#c9cbd1; }
-    h3 { margin:0 0 13px; font-size:18px; letter-spacing:-.4px; font-weight:500; }
-    .card p { color:var(--muted); font-size:13px; line-height:1.85; margin:0; }
-    .card-tags { margin-top:27px; padding-top:19px; border-top:1px solid #ffffff09; color:#858c97; font:9px/1.7 var(--mono); letter-spacing:.3px; }
-    .install-section { position:relative; padding:16px 0 96px; }
-    .install-panel { position:relative; padding:45px; border:1px solid #ffffff20; border-radius:10px; background:radial-gradient(ellipse at 50% 0,#ffffff04,transparent 65%),#0b0c0f; overflow:hidden; }
-    .install-header { display:flex; align-items:start; justify-content:space-between; gap:25px; margin-bottom:31px; }
-    .install-panel h2 { font-size:30px; letter-spacing:-1px; }
-    .install-header p { color:var(--muted); font-size:13px; line-height:1.7; margin:13px 0 0; }
-    .linux-badge { padding:7px 10px; border:1px solid #ffffff15; border-radius:4px; font:9px var(--mono); color:#8d929c; white-space:nowrap; }
-    .command { display:flex; align-items:center; gap:18px; min-width:0; border:1px solid #ffffff16; border-radius:6px; background:#060709; padding:17px 15px 17px 19px; }
-    .prompt { font:13px var(--mono); color:#4f5660; user-select:none; }
-    .command code { flex:1; min-width:0; overflow-x:auto; padding:4px 0; font:11px/1.8 var(--mono); white-space:nowrap; color:#cbd0d8; scrollbar-width:thin; }
-    .copy { display:flex; align-items:center; gap:7px; min-height:34px; padding:0 11px; border:1px solid #ffffff20; border-radius:4px; background:#17191e; color:#e0e1e5; font-size:11px; cursor:pointer; transition:background .2s; flex-shrink:0; }
-    .copy:hover { background:#252830; }
-    .copy svg { width:12px; height:12px; }
-    .install-note { display:flex; gap:22px; align-items:baseline; justify-content:space-between; margin-top:17px; font-size:11px; line-height:1.8; color:#8d95a1; }
-    .install-note p { margin:0; max-width:650px; }.install-note a { white-space:nowrap; color:#b7bbc3; border-bottom:1px solid #ffffff25; }
-    .principle { display:grid; grid-template-columns:1fr 1fr; gap:75px; padding:62px 0 72px; border-top:1px solid var(--line); }
-    .principle h2 { max-width:400px; font-size:29px; line-height:1.3; }
-    .principle p { color:#858b95; font-size:13px; line-height:1.9; margin:0 0 15px; }
-    .principle a { color:#c6c9d0; font-size:12px; }
-    footer { display:flex; align-items:center; justify-content:space-between; gap:25px; padding:27px 0 35px; border-top:1px solid var(--line); }
-    footer .brand { font-size:16px; color:#b6bac2; gap:8px; }footer .brand img { width:21px; height:24px; opacity:.7; }
-    .footer-meta { color:#858c97; font:9px/1.7 var(--mono); }
-    .footer-links { display:flex; gap:22px; font-size:11px; color:#8c939e; }
+    html { scroll-behavior:smooth; scroll-padding-top:100px; }
+    body { margin:0; background:var(--paper); color:var(--ink); font-family:Inter,"Helvetica Neue",Arial,sans-serif; -webkit-font-smoothing:antialiased; }
+    ::selection { background:#c9c9c9; color:#111111; }
+    a { color:inherit; text-decoration:none; }button { font:inherit; }a,button { -webkit-tap-highlight-color:transparent; }
+    :focus-visible { outline:2px solid #777777; outline-offset:5px; }
+    [hidden] { display:none!important; }
+    .skip { position:fixed; top:12px; left:12px; padding:12px; background:#ffffff; color:#111111; z-index:30; transform:translateY(-180%); }.skip:focus { transform:none; }
+    .site-header { width:calc(100% - 64px); max-width:1550px; height:82px; margin:auto; display:flex; align-items:center; justify-content:space-between; gap:30px; }
+    .brand { display:inline-flex; align-items:center; gap:10px; font-size:22px; font-weight:600; letter-spacing:-1px; }.brand img { width:31px; height:35px; filter:invert(1); }
+    .nav-links { display:flex; align-items:center; gap:33px; font-size:13px; color:#4c4c4c; }.nav-links a:hover { color:#000000; }
+    .nav-actions { display:flex; align-items:center; gap:9px; font-size:12px; }
+    .pill { display:inline-flex; align-items:center; justify-content:center; gap:14px; min-height:43px; padding:0 20px; border:1px solid #d9d9d9; border-radius:100px; transition:background .2s,transform .2s,border-color .2s; white-space:nowrap; }
+    .pill:hover { background:#ececec; border-color:#bfbfbf; }.pill.dark { background:#212121; color:#ffffff; border-color:#212121; }.pill.dark:hover { background:#3d3d3d; }
+    .pill.light { background:#ffffff; color:#1a1a1a; border-color:#ffffff; }.pill.light:hover { background:#e5e5e5; border-color:#e5e5e5; transform:translateY(-2px); }
+    .arrow { display:inline-block; transition:transform .2s; }a:hover .arrow { transform:translate(2px,-2px); }
+    .hero { position:relative; isolation:isolate; display:flex; align-items:center; justify-content:center; min-height:700px; height:calc(100svh - 109px); max-height:850px; margin:0 26px; border:1px solid #ffffff1f; border-radius:23px; overflow:hidden; background:#1e1e1e; color:#ffffff; }
+    .hero::after { content:""; position:absolute; inset:0; z-index:-1; background:linear-gradient(180deg,#18181822,transparent 35%,#13131318),radial-gradient(ellipse at 50% 40%,transparent 30%,#13131355 100%); pointer-events:none; }
+    #wave-field { position:absolute; inset:0; z-index:-2; width:100%; height:100%; pointer-events:none; }
+    .hero-content { position:relative; width:min(1040px,calc(100% - 60px)); padding:55px 0 65px; text-align:center; }
+    .announcement { display:inline-flex; align-items:center; gap:12px; margin-bottom:37px; padding:7px 8px 7px 17px; border:1px solid #ffffff3b; border-radius:100px; background:#ffffff05; font-size:12px; line-height:1.4; color:#e1e1e1; transition:background .2s; }.announcement:hover { background:#ffffff12; }.announcement .round-arrow { display:grid; place-items:center; width:25px; height:25px; border-radius:50%; background:#f2f2f2; color:#313131; font-size:15px; }.announcement .mini-dot { width:5px; height:5px; background:#d7d7d7; border-radius:50%; }
+    h1 { margin:0; font-size:clamp(50px,5.4vw,79px); line-height:1.08; font-weight:450; letter-spacing:-3.5px; text-wrap:balance; }h1 span { color:#d5d5d5; }
+    .hero-description { max-width:490px; margin:30px auto 37px; font-size:17px; line-height:1.6; color:#d2d2d2; text-wrap:balance; }
+    .hero-content .pill { min-height:49px; padding:0 26px; font-size:13px; }.hero-footnote { margin:18px 0 0; color:#a8a8a8; font:10px/1.7 var(--mono); letter-spacing:.3px; }
+    .motion-toggle { position:absolute; bottom:20px; right:22px; display:flex; align-items:center; gap:7px; padding:8px 11px; color:#cacaca; background:#13131366; border:1px solid #ffffff1c; border-radius:100px; font-size:10px; cursor:pointer; }.motion-toggle:hover { background:#ffffff12; }.motion-toggle svg { width:10px; height:10px; }
+    .hero-coordinates { position:absolute; bottom:28px; left:28px; color:#aeaeae; font:9px var(--mono); letter-spacing:1px; }
+    .content-frame { position:relative; max-width:1240px; width:calc(100% - 96px); margin:auto; border-left:1px solid var(--line); border-right:1px solid var(--line); }
+    .content-frame::before,.content-frame::after { content:""; position:absolute; top:0; bottom:0; width:40px; background-image:radial-gradient(#c5c5c5 .7px,transparent .7px); background-size:8px 8px; opacity:.35; pointer-events:none; }.content-frame::before { right:calc(100% + 9px); }.content-frame::after { left:calc(100% + 9px); }
+    .section { padding:100px 0; }.center-heading { padding:0 30px; text-align:center; }.eyebrow { margin:0 0 19px; color:#797979; font:10px/1.6 var(--mono); letter-spacing:1.6px; text-transform:uppercase; }h2 { margin:0; font-weight:450; font-size:49px; line-height:1.13; letter-spacing:-2px; text-wrap:balance; }.section-intro { max-width:650px; margin:22px auto 0; color:var(--muted); font-size:16px; line-height:1.7; text-wrap:balance; }
+    .machine-scene { position:relative; height:390px; max-width:880px; margin:30px auto 0; overflow:hidden; }
+    .machine-scene::before { content:""; position:absolute; width:490px; height:350px; top:0; left:calc(50% - 245px); border:1px solid #dcdcdc; border-radius:50%; transform:rotate(-22deg); background:radial-gradient(ellipse at center,#eeeeee88,transparent 65%); }
+    .machine-scene::after { content:""; position:absolute; width:350px; height:490px; top:-70px; left:calc(50% - 175px); border:1px solid #e2e2e2; border-radius:50%; transform:rotate(-22deg); pointer-events:none; }
+    .orbit { position:absolute; width:630px; height:300px; top:35px; left:calc(50% - 315px); border:1px dashed #c8c8c8; border-radius:50%; transform:rotate(-15deg); }
+    .orbit-dot { position:absolute; top:27px; left:112px; width:8px; height:8px; border:2px solid var(--paper); background:#5b5b5b; border-radius:50%; box-shadow:0 0 0 1px #a4a4a4; }
+    .machine-core { position:absolute; left:calc(50% - 80px); top:96px; width:160px; height:178px; z-index:2; display:grid; place-items:center; border:1px solid #c7c7c7; border-radius:18px; background:linear-gradient(145deg,#ffffff,#efefef); box-shadow:0 24px 45px #2b2b2b16,inset 0 1px 0 #ffffff; transform:rotate(-5deg); transition:transform .4s,box-shadow .4s; }.machine-scene:hover .machine-core { transform:rotate(0) translateY(-5px); box-shadow:0 30px 50px #2b2b2b20; }.machine-core svg { width:81px; height:100px; color:#464646; }
+    .scene-label { position:absolute; z-index:3; display:flex; align-items:center; gap:11px; padding:13px 16px; border:1px solid #d7d7d7; background:#fafafaed; border-radius:7px; box-shadow:0 8px 20px #2f2f2f05; font-size:11px; }.scene-label svg { width:16px; height:16px; color:#5e5e5e; }.scene-label.one { left:9%; top:61px; }.scene-label.two { right:8%; top:146px; }.scene-label.three { left:19%; bottom:58px; }.scene-caption { position:absolute; bottom:16px; left:0; width:100%; text-align:center; font:9px var(--mono); color:#828282; letter-spacing:.9px; }
+    .feature-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); border-top:1px solid var(--line); border-bottom:1px solid var(--line); }.feature { position:relative; padding:31px 32px 36px; border-right:1px solid var(--line); overflow:hidden; }.feature:last-child { border-right:0; }.feature::before { content:""; position:absolute; inset:0; pointer-events:none; opacity:0; background:radial-gradient(270px circle at var(--x,50%) var(--y,0%),#cccccc3b,transparent 70%); transition:opacity .2s; }.feature:hover::before { opacity:1; }.feature svg { width:23px; height:23px; margin-bottom:20px; color:#464646; }h3 { margin:0 0 12px; font-weight:500; font-size:19px; letter-spacing:-.5px; }.feature p { margin:0; color:var(--muted); font-size:13px; line-height:1.75; }
+    .comparison-section { padding-top:0; }.comparison { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin:46px 26px 0; }.comparison-card { position:relative; min-height:355px; padding:28px; border:1px solid var(--line); border-radius:13px; overflow:hidden; }.comparison-card.before { background:#f0f0f0; }.comparison-card.after { color:#ffffff; border-color:#2b2b2b; background:#252525; }.comparison-card h3 { font-size:20px; }.comparison-card .small { margin:0; font-size:11px; color:#757575; }.comparison-card.after .small { color:#b4b4b4; }.alert-stack { position:relative; height:216px; margin-top:25px; }.alert { position:absolute; width:87%; padding:14px 16px; border:1px solid #d9d9d9; border-radius:7px; background:#fafafa; color:#4d4d4d; box-shadow:0 7px 12px #2c2c2c08; font-size:11px; transition:transform .5s; }.alert small { display:block; margin-top:7px; font:9px var(--mono); color:#8d8d8d; }.alert:nth-child(1) { top:10px; left:0; transform:rotate(-5deg); }.alert:nth-child(2) { top:77px; right:0; transform:rotate(5deg); }.alert:nth-child(3) { top:144px; left:4%; transform:rotate(-3deg); }.before:hover .alert:nth-child(1) { transform:rotate(-7deg) translateY(-3px); }.before:hover .alert:nth-child(2) { transform:rotate(7deg) translateX(4px); }
+    .response-flow { margin-top:30px; display:grid; gap:0; }.response-row { display:flex; align-items:center; gap:12px; padding:16px 0; border-bottom:1px solid #ffffff14; font-size:12px; }.response-row:last-child { border-bottom:0; }.check { display:grid; place-items:center; width:24px; height:24px; border:1px solid #ffffff30; border-radius:50%; color:#d9d9d9; font-size:11px; }.response-row span:last-child { margin-left:auto; font:9px var(--mono); color:#bababa; }.illustration-note { margin:14px 28px 0; text-align:center; font:9px/1.8 var(--mono); color:#7d7d7d; }
+    .modes-section { padding-top:0; }.tablist { display:flex; width:max-content; max-width:calc(100% - 40px); margin:35px auto; gap:5px; padding:5px; border:1px solid #dedede; border-radius:100px; background:#f0f0f0; }.tablist button { min-height:40px; padding:0 24px; border:0; border-radius:100px; color:#626262; background:transparent; cursor:pointer; font-size:12px; white-space:nowrap; transition:background .2s,color .2s,box-shadow .2s; }.tablist button[aria-selected="true"] { background:#ffffff; color:#1d1d1d; box-shadow:0 1px 5px #24242414; }.tablist button:hover { color:#111111; }
+    .tabpanel { margin:0 26px; padding:37px; border:1px solid var(--line); border-radius:13px; background:#ffffff; }.panel-heading { display:flex; align-items:start; justify-content:space-between; gap:40px; }.panel-heading h3 { font-size:26px; letter-spacing:-.8px; }.panel-heading p { max-width:550px; margin:12px 0 0; font-size:13px; line-height:1.8; color:var(--muted); }.panel-badge { padding:8px 11px; border:1px solid #dedede; border-radius:5px; font:9px var(--mono); color:#777777; white-space:nowrap; }
+    .diagram { display:flex; align-items:center; justify-content:center; gap:11px; padding:38px 0 32px; }.node { display:grid; align-content:center; justify-items:center; gap:10px; width:145px; min-height:91px; padding:15px; text-align:center; border:1px solid #dedede; border-radius:8px; background:#f6f6f6; font-size:11px; }.node svg { width:21px; height:21px; color:#626262; }.connector { color:#a6a6a6; font-size:19px; }
+    .panel-details { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); border-top:1px solid #e5e5e5; }.panel-detail { padding:22px 20px 0; border-right:1px solid #e5e5e5; }.panel-detail:first-child { padding-left:0; }.panel-detail:last-child { border-right:0; padding-right:0; }.panel-detail h4 { margin:0 0 9px; color:#5f5f5f; font:9px var(--mono); letter-spacing:1px; text-transform:uppercase; }.panel-detail p { margin:0; font-size:12px; line-height:1.8; color:#666666; }
+    .install-section { padding:0 26px 34px; }.install-panel { position:relative; padding:65px 42px; text-align:center; border:1px solid #d6d6d6; border-radius:15px; background:radial-gradient(ellipse at center,#ffffff 0,#efefef 100%); overflow:hidden; }.install-panel::before { content:""; position:absolute; inset:0; pointer-events:none; background-image:radial-gradient(#adadad .7px,transparent .7px); background-size:13px 13px; mask-image:linear-gradient(90deg,#000000,transparent 25%,transparent 75%,#000000); opacity:.45; }.install-panel h2 { font-size:43px; }.install-panel>p { position:relative; max-width:570px; margin:18px auto 26px; color:#696969; font-size:14px; line-height:1.7; }
+    .command { position:relative; display:flex; align-items:center; max-width:700px; margin:auto; gap:14px; padding:13px 13px 13px 20px; border:1px solid #d8d8d8; border-radius:8px; background:#ffffffdf; text-align:left; }.prompt { color:#8c8c8c; font:12px var(--mono); user-select:none; }.command code { flex:1; min-width:0; overflow-x:auto; font:11px/1.8 var(--mono); color:#464646; white-space:nowrap; scrollbar-width:thin; }.copy { flex-shrink:0; display:flex; align-items:center; gap:7px; min-height:34px; padding:0 12px; border:0; border-radius:100px; background:#2a2a2a; color:#ffffff; font-size:11px; cursor:pointer; }.copy:hover { background:#4a4a4a; }.copy svg { width:12px; height:12px; }.install-panel .install-note { max-width:620px; margin:18px auto 0; color:#777777; font-size:11px; line-height:1.8; }.install-note a { color:#3e3e3e; text-decoration:underline; text-underline-offset:3px; }
+    .limit-note { max-width:790px; margin:0 auto; padding:30px 30px 47px; color:#7c7c7c; text-align:center; font-size:11px; line-height:1.9; }.limit-note a { color:#4d4d4d; text-decoration:underline; text-underline-offset:3px; }
+    .site-footer { display:grid; grid-template-columns:1.5fr 1fr 1fr; gap:50px; max-width:1240px; width:calc(100% - 96px); margin:auto; padding:55px 0 35px; border-top:1px solid var(--line); }.site-footer .brand { font-size:24px; }.footer-tagline { margin:15px 0 0; max-width:240px; color:#767676; font-size:12px; line-height:1.8; }.footer-title { margin:0 0 17px; font-size:12px; font-weight:500; }.footer-links { display:grid; gap:13px; justify-items:start; color:#6b6b6b; font-size:12px; }.footer-links a:hover { color:#212121; }.footer-bottom { display:flex; justify-content:space-between; gap:20px; grid-column:1/-1; padding-top:27px; margin-top:16px; border-top:1px solid var(--line); color:#818181; font:9px/1.8 var(--mono); }
     .sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
-    @media(min-width:1450px) { .hero { min-height:660px; } }
-    @media(max-width:900px) { .shell { width:calc(100% - 56px); } h1 { font-size:65px; letter-spacing:-3.7px; }.hero { grid-template-columns:1.2fr 1fr; min-height:560px; }.visual { height:350px; }.orbital { width:190px; height:190px; top:80px; left:calc(50% - 95px); }.emblem { top:103px; }.hero-description { font-size:14px; }.cards { gap:10px; }.card { padding:25px 20px; }.install-panel { padding:32px; }.command code { font-size:10px; }.principle { gap:35px; } }
-    @media(max-width:650px) { .shell { width:calc(100% - 40px); } header { height:79px; }.brand { font-size:19px; }nav { gap:20px; }nav .docs { display:none; }.hero { display:flex; flex-direction:column; align-items:stretch; padding:62px 0 20px; min-height:auto; }.eyebrow { font-size:9px; letter-spacing:1.1px; margin-bottom:24px; }h1 { font-size:clamp(48px,15.5vw,64px); letter-spacing:-3.3px; }.hero-description { max-width:360px; font-size:15px; margin-top:24px; }.visual { height:300px; margin-top:25px; }.orbital { top:58px; width:180px; height:180px; left:calc(50% - 90px); border-radius:28px; }.emblem { top:78px; }.emblem img { width:72px; height:86px; }#field { inset:0 -10px; width:calc(100% + 20px); height:100%; }.label-top { top:10px; left:12%; }.label-bottom { bottom:10px; right:10%; }.cross.one { top:46px; }.cross.two { bottom:34px; }.platforms { flex-wrap:wrap; justify-content:center; padding:19px 0; row-gap:10px; }.platform-list { gap:20px; }.platforms .preview { display:none; }.section { padding:65px 0; }.section-heading { display:block; margin-bottom:27px; }h2 { font-size:31px; }.section-intro { margin-top:18px; max-width:340px; }.cards { grid-template-columns:1fr; gap:12px; }.card { padding:27px; }.card-top { margin-bottom:26px; }.card p { max-width:380px; }.card-tags { margin-top:21px; }.install-section { padding:0 0 62px; }.install-panel { padding:26px 20px; }.install-header { margin-bottom:25px; }.install-panel h2 { font-size:26px; }.linux-badge { display:none; }.command { flex-wrap:wrap; gap:8px; padding:13px 12px; }.command code { flex-basis:calc(100% - 22px); font-size:10px; }.copy { margin:5px 0 0 auto; }.install-note { display:block; }.install-note a { display:inline-block; margin-top:11px; }.principle { grid-template-columns:1fr; gap:24px; padding:45px 0 47px; }.principle h2 { font-size:27px; }footer { flex-wrap:wrap; row-gap:20px; }.footer-meta { order:3; flex-basis:100%; }.footer-links { gap:19px; } }
-    @media(prefers-reduced-motion:reduce) { html { scroll-behavior:auto; }*,*::before,*::after { transition:none!important; animation:none!important; }.card:hover { transform:none; } }
+    @media(min-width:1700px) { .hero { max-width:1650px; margin:auto; }.site-header { max-width:1600px; } }
+    @media(max-width:1000px) { .site-header { width:calc(100% - 48px); }.nav-links { gap:23px; }.hero { min-height:660px; height:calc(100svh - 106px); margin:0 20px; }h1 { font-size:64px; }.content-frame,.site-footer { width:calc(100% - 70px); }.feature { padding:27px 24px; }.scene-label.one { left:4%; }.scene-label.two { right:3%; }.tabpanel { padding:28px; }.panel-heading { gap:22px; }.panel-badge { display:none; }.node { width:130px; }.comparison-card { padding:23px; }.comparison-card h3 { font-size:18px; } }
+    @media(max-width:720px) { html { scroll-padding-top:30px; }.site-header { height:75px; width:calc(100% - 36px); gap:15px; }.brand { font-size:21px; gap:7px; }.brand img { width:27px; height:31px; }.nav-links { display:none; }.nav-actions .source-link { display:none; }.nav-actions .pill { min-height:36px; padding:0 15px; font-size:11px; }.hero { margin:0 12px; min-height:630px; height:calc(100svh - 95px); max-height:790px; border-radius:17px; }.hero-content { width:calc(100% - 38px); padding:45px 0 63px; }.announcement { font-size:10px; margin-bottom:30px; gap:9px; padding-left:12px; }.announcement .round-arrow { width:23px; height:23px; }h1 { font-size:clamp(42px,8vw,57px); letter-spacing:-2.2px; line-height:1.08; }.hero-description { margin-top:25px; font-size:15px; max-width:340px; line-height:1.65; }.hero-content .pill { min-height:46px; font-size:12px; }.hero-footnote { font-size:8px; margin-top:17px; }.hero-coordinates { left:19px; bottom:24px; font-size:8px; letter-spacing:.5px; }.motion-toggle { right:16px; bottom:17px; padding:7px 9px; font-size:9px; }.content-frame,.site-footer { width:calc(100% - 40px); }.content-frame::before,.content-frame::after { width:10px; }.section { padding:70px 0; }.center-heading { padding:0 18px; }h2 { font-size:37px; letter-spacing:-1.5px; }.eyebrow { font-size:8px; margin-bottom:16px; letter-spacing:1.1px; }.section-intro { font-size:14px; margin-top:18px; }.machine-scene { height:340px; margin-top:23px; }.machine-scene::before { width:350px; height:270px; left:calc(50% - 175px); top:17px; }.machine-scene::after { width:270px; height:350px; left:calc(50% - 135px); top:-22px; }.orbit { width:460px; height:240px; top:45px; left:calc(50% - 230px); }.machine-core { top:90px; width:112px; height:133px; left:calc(50% - 56px); border-radius:13px; }.machine-core svg { width:61px; height:78px; }.scene-label { padding:9px 10px; gap:6px; font-size:9px; }.scene-label svg { width:13px; height:13px; }.scene-label.one { top:30px; left:4%; }.scene-label.two { top:236px; right:3%; }.scene-label.three { left:3%; bottom:72px; }.scene-caption { font-size:8px; bottom:15px; }.feature-grid { grid-template-columns:1fr; }.feature { padding:26px 24px; border-right:0; border-bottom:1px solid var(--line); }.feature:last-child { border-bottom:0; }.feature svg { margin-bottom:15px; width:22px; height:22px; }.feature p { max-width:420px; font-size:13px; }.comparison-section,.modes-section { padding-top:0; }.comparison { grid-template-columns:1fr; margin:30px 12px 0; gap:12px; }.comparison-card { min-height:333px; padding:25px; }.comparison-card h3 { font-size:19px; }.alert-stack { height:205px; }.alert { width:89%; }.illustration-note { margin:13px 18px 0; font-size:8px; }.tablist { margin:28px auto; padding:4px; gap:2px; max-width:calc(100% - 20px); }.tablist button { padding:0 15px; min-height:37px; font-size:11px; }.tabpanel { margin:0 12px; padding:25px 20px; }.panel-heading h3 { font-size:24px; }.panel-heading p { font-size:12px; }.diagram { flex-direction:column; gap:8px; padding:27px 0; }.node { display:flex; align-items:center; justify-content:center; width:100%; min-height:57px; padding:12px; font-size:11px; gap:12px; }.node svg { width:20px; height:20px; flex-shrink:0; }.connector { font-size:15px; line-height:1; transform:rotate(90deg); }.panel-details { grid-template-columns:1fr; }.panel-detail,.panel-detail:first-child,.panel-detail:last-child { padding:18px 0; border-right:0; border-bottom:1px solid #e5e5e5; }.panel-detail:last-child { padding-bottom:0; border-bottom:0; }.panel-detail p { font-size:12px; }.install-section { padding:0 12px 13px; }.install-panel { padding:43px 18px; border-radius:11px; }.install-panel h2 { font-size:32px; }.install-panel>p { font-size:12px; }.command { flex-wrap:wrap; padding:13px 12px; gap:7px; }.command code { font-size:9px; flex-basis:calc(100% - 22px); }.copy { margin:6px 0 0 auto; min-height:31px; font-size:10px; }.install-panel .install-note { font-size:10px; }.limit-note { padding:25px 21px 36px; font-size:10px; }.site-footer { grid-template-columns:1fr 1fr; padding:37px 0 25px; gap:30px; }.footer-brand { grid-column:1/-1; }.site-footer .brand { font-size:23px; }.footer-tagline { max-width:300px; margin-top:11px; font-size:11px; }.footer-title,.footer-links { font-size:11px; }.footer-bottom { margin-top:0; padding-top:22px; display:block; font-size:8px; }.footer-bottom span { display:block; margin-top:7px; } }
+    @media(prefers-reduced-motion:reduce) { html { scroll-behavior:auto; }*,*::before,*::after { transition:none!important; animation:none!important; }.machine-scene:hover .machine-core { transform:rotate(-5deg); }.before:hover .alert:nth-child(1) { transform:rotate(-5deg); }.before:hover .alert:nth-child(2) { transform:rotate(5deg); }.pill.light:hover { transform:none; } }
   </style>
 </head>
 <body>
   <a class="skip" href="#main">Skip to content</a>
-  <div class="shell">
-    <header>
-      <a class="brand" href="./" aria-label="Fortmend home"><img src="fortmend-mark.svg" alt="">Fortmend</a>
-      <nav aria-label="Main navigation"><a href="#capabilities">Overview</a><a class="docs" href="https://github.com/ErzenXz/fortmend/blob/main/docs/LINUX.md">Docs</a><a class="nav-github" href="https://github.com/ErzenXz/fortmend">GitHub <span class="arrow" aria-hidden="true">↗</span></a></nav>
-    </header>
-    <main id="main">
-      <section class="hero" aria-labelledby="hero-title">
-        <div class="hero-copy">
-          <p class="eyebrow"><span class="status-dot" aria-hidden="true"></span> Autonomous VM security</p>
-          <h1 id="hero-title">Your server.<br><span>Under watch.</span></h1>
-          <p class="hero-description">An autonomous security engineer that lives inside your Linux VM. It watches for attacks, fixes what it can, and checks its work.</p>
-          <div class="hero-actions"><a class="button" href="#install">Install Fortmend <span aria-hidden="true">↓</span></a><a class="text-link" href="https://github.com/ErzenXz/fortmend/blob/main/docs/LINUX.md">Read the docs <span class="arrow" aria-hidden="true">↗</span></a></div>
+  <header class="site-header">
+    <a class="brand" href="./" aria-label="Fortmend home"><img src="fortmend-mark.svg" alt="">Fortmend</a>
+    <nav class="nav-links" aria-label="Main navigation"><a href="#overview">Overview</a><a href="#capabilities">How it works</a><a href="https://github.com/ErzenXz/fortmend/blob/main/docs/LINUX.md">Documentation <span aria-hidden="true">↗</span></a></nav>
+    <div class="nav-actions"><a class="pill source-link" href="https://github.com/ErzenXz/fortmend">View source <span aria-hidden="true">↗</span></a><a class="pill dark" href="#install">Get started <span aria-hidden="true">↓</span></a></div>
+  </header>
+  <main id="main">
+    <section class="hero" aria-labelledby="hero-title">
+      <canvas id="wave-field" aria-hidden="true"></canvas>
+      <div class="hero-content">
+        <a class="announcement" href="https://github.com/ErzenXz/fortmend/blob/main/docs/TESTING.md"><span class="mini-dot" aria-hidden="true"></span> Built for Ubuntu &amp; Debian · Developer preview <span class="round-arrow" aria-hidden="true">→</span></a>
+        <h1 id="hero-title">Your server. Under watch.<br><span>Security that stays with it.</span></h1>
+        <p class="hero-description">An autonomous security engineer inside your Linux VM.<br>Find risks. Apply fixes. Check the results.</p>
+        <a class="pill light" href="#install">Install Fortmend <span aria-hidden="true">↗</span></a>
+        <p class="hero-footnote">SELF-HOSTED &nbsp; / &nbsp; OPEN SOURCE &nbsp; / &nbsp; ALWAYS ON</p>
+      </div>
+      <span class="hero-coordinates" aria-hidden="true">OBSERVE → REPAIR → VERIFY</span>
+      <button class="motion-toggle" id="motion-toggle" type="button" aria-pressed="false" aria-label="Pause background animation"><svg viewBox="0 0 10 10" fill="currentColor" aria-hidden="true"><path d="M2 1h2v8H2zm4 0h2v8H6z"/></svg><span>Pause motion</span></button>
+    </section>
+    <div class="content-frame">
+      <section class="section" id="overview" aria-labelledby="overview-title">
+        <div class="center-heading"><p class="eyebrow">The right place to start is inside.</p><h2 id="overview-title">Home: your VM.</h2><p class="section-intro">Close to your software. Close to the evidence.<br>One continuous response loop, running on the machine you own.</p></div>
+        <div class="machine-scene" aria-hidden="true">
+          <div class="orbit"><span class="orbit-dot"></span></div>
+          <div class="machine-core"><svg viewBox="0 0 90 110" fill="none" stroke="currentColor" stroke-width="1.3"><rect x="13" y="11" width="64" height="27" rx="5"/><rect x="13" y="43" width="64" height="27" rx="5"/><rect x="13" y="75" width="64" height="27" rx="5"/><path d="M24 21h23m-23 6h15m-15 26h23m-23 6h15m-15 26h23m-23 6h15"/><circle cx="64" cy="24" r="2"/><circle cx="64" cy="56" r="2"/><circle cx="64" cy="88" r="2"/></svg></div>
+          <span class="scene-label one"><svg viewBox="0 0 18 18" fill="none" stroke="currentColor"><path d="m9 2 6 3v4c0 4-6 7-6 7S3 13 3 9V5l6-3Z"/><path d="m6 9 2 2 4-4"/></svg> Local attack monitoring</span>
+          <span class="scene-label two"><svg viewBox="0 0 18 18" fill="none" stroke="currentColor"><path d="M3 6h12v9H3zM6 3h6v3M6 10h6"/></svg> Distro-aware CVE checks</span>
+          <span class="scene-label three"><svg viewBox="0 0 18 18" fill="none" stroke="currentColor"><path d="m10 2-2 6h6L7 16l1-6H3l7-8Z"/></svg> Autonomous investigation</span>
+          <span class="scene-caption">UBUNTU 24.04 / DEBIAN 12 / SYSTEMD</span>
         </div>
-        <div class="visual" aria-hidden="true"><canvas id="field"></canvas><span class="visual-label label-top">Local intelligence / always on</span><div class="orbital"></div><div class="emblem"><img src="fortmend-mark.svg" alt=""></div><span class="cross one"></span><span class="cross two"></span><span class="visual-label label-bottom"><span class="status-dot"></span> Observe · Repair · Verify</span></div>
-      </section>
-      <div class="platforms"><span>BUILT FOR THE MACHINE YOU OWN</span><div class="platform-list"><span>Ubuntu 24.04</span><span>Debian 12</span><span>Self-hosted</span></div><span class="preview">Developer preview</span></div>
-      <section class="section" id="capabilities" aria-labelledby="capabilities-title">
-        <div class="section-heading"><div><p class="kicker">A continuous line of defense</p><h2 id="capabilities-title">From signal to repair.</h2></div><p class="section-intro">Security is ongoing work. Fortmend keeps the loop running, right where your software runs.</p></div>
-        <div class="cards">
-          <article class="card"><div class="card-top"><svg class="card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="4.5"/><path d="M12 1v4m0 14v4M1 12h4m14 0h4"/></svg><span class="card-number">01 / OBSERVE</span></div><h3>Notice what changes.</h3><p>Match installed packages against Ubuntu and Debian advisories. Watch SSH activity, suspicious PHP files, and changes to persistence.</p><div class="card-tags">DISTRO CVEs / SSH / PHP / SYSTEMD</div></article>
-          <article class="card"><div class="card-top"><svg class="card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" aria-hidden="true"><path d="m14 3-2 7h7L9 21l2-8H4L14 3Z"/></svg><span class="card-number">02 / REPAIR</span></div><h3>Do something about it.</h3><p>Apply security updates and quarantine detected PHP threats. Let Codex investigate incidents and repair the VM using your ChatGPT account.</p><div class="card-tags">SECURITY PATCHES / QUARANTINE / AI</div></article>
-          <article class="card"><div class="card-top"><svg class="card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" aria-hidden="true"><path d="m12 2 8 4v6c0 5-8 10-8 10S4 17 4 12V6l8-4Z"/><path d="m8 12 3 3 5-6"/></svg><span class="card-number">03 / VERIFY</span></div><h3>Check the actual result.</h3><p>Recheck findings and service health after a response. Keep an audit trail, preserve evidence, and keep unresolved risks visible.</p><div class="card-tags">HEALTH CHECKS / EVIDENCE / AUDIT</div></article>
+        <div class="feature-grid">
+          <article class="feature"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="4.5"/><path d="M12 1v4m0 14v4M1 12h4m14 0h4"/></svg><h3>See what changes.</h3><p>Watch SSH activity, suspicious PHP files, and persistence changes. Match installed package versions to Ubuntu and Debian security advisories.</p></article>
+          <article class="feature"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" aria-hidden="true"><path d="m14 3-2 7h7L9 21l2-8H4L14 3Z"/></svg><h3>Take the next step.</h3><p>Apply security updates and quarantine detected PHP threats. Give Codex the tools to investigate incidents and repair your VM.</p></article>
+          <article class="feature"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" aria-hidden="true"><path d="m12 2 8 4v6c0 5-8 10-8 10S4 17 4 12V6l8-4Z"/><path d="m8 12 3 3 5-6"/></svg><h3>Check the work.</h3><p>Recheck findings and service health after a response. Preserve evidence, keep an audit trail, and leave unresolved risks visible.</p></article>
         </div>
       </section>
-      <section class="install-section" id="install" aria-labelledby="install-title"><div class="install-panel">
-        <div class="install-header"><div><p class="kicker">One machine. One command.</p><h2 id="install-title">Give your VM a watchkeeper.</h2><p>Run inside your Ubuntu or Debian VM. The installer guides you through setup.</p></div><span class="linux-badge">LINUX / SYSTEMD</span></div>
-        <div class="command"><span class="prompt" aria-hidden="true">$</span><code id="install-command">curl -fsSL https://fortmend.vercel.app/install.sh | sudo sh</code><button class="copy" id="copy-install" type="button" aria-label="Copy install command"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" aria-hidden="true"><rect x="5" y="5" width="8" height="9" rx="1.5"/><path d="M10 5V2H2v9h3"/></svg><span>Copy</span></button></div>
-        <div class="install-note"><p>Root access is required. Sign in to Codex when prompted. Full-control AI can change your VM; start with a recoverable machine and review your policy.</p><a href="https://github.com/ErzenXz/fortmend/blob/main/site/install.sh">Inspect the installer <span aria-hidden="true">↗</span></a></div><span id="copy-status" class="sr-only" role="status" aria-live="polite"></span>
-      </div></section>
-      <section class="principle" aria-labelledby="principle-title"><div><p class="kicker">Your infrastructure. Your control.</p><h2 id="principle-title">Close to the system.<br>Clear about its limits.</h2></div><div><p>Fortmend runs locally as a systemd service. No central platform is required. Connect Codex with your ChatGPT account for autonomous investigation and repair.</p><p>This is a developer preview. Findings depend on sensor coverage and advisory data; a successful check cannot prove a machine is clean. Fleet coordination and container support are future work.</p><a href="https://github.com/ErzenXz/fortmend/blob/main/docs/TESTING.md">See what we test <span class="arrow" aria-hidden="true">↗</span></a></div></section>
-    </main>
-    <footer><a class="brand" href="./"><img src="fortmend-mark.svg" alt="">Fortmend</a><span class="footer-meta">FORTIFY + MEND · AGPL-3.0 · DEVELOPER PREVIEW</span><div class="footer-links"><a href="https://github.com/ErzenXz/fortmend">Source <span aria-hidden="true">↗</span></a><a href="https://github.com/ErzenXz/fortmend/blob/main/docs/LINUX.md">Documentation <span aria-hidden="true">↗</span></a></div></footer>
-  </div>
+      <section class="section comparison-section" aria-labelledby="comparison-title">
+        <div class="center-heading"><p class="eyebrow">Beyond another alert.</p><h2 id="comparison-title">Less chasing signals.<br>More closing the loop.</h2><p class="section-intro">A finding should lead to an investigation.<br>A repair should lead to a check.</p></div>
+        <div class="comparison">
+          <div class="comparison-card before"><h3>A queue of things to look into.</h3><p class="small">Different signals. Another manual investigation.</p><div class="alert-stack" aria-hidden="true"><div class="alert">A new advisory affects an installed package.<small>PATCH STATUS / UNKNOWN</small></div><div class="alert">Suspicious PHP file in a web root.<small>INVESTIGATION / NEEDED</small></div><div class="alert">SSH login after repeated failures.<small>REVIEW / PENDING</small></div></div></div>
+          <div class="comparison-card after"><h3>A path from evidence to response.</h3><p class="small">One local loop, with a record of what happened.</p><div class="response-flow"><div class="response-row"><span class="check" aria-hidden="true">01</span>Collect and assess the evidence<span>OBSERVE</span></div><div class="response-row"><span class="check" aria-hidden="true">02</span>Apply a response<span>REPAIR</span></div><div class="response-row"><span class="check" aria-hidden="true">03</span>Recheck the finding and health<span>VERIFY</span></div></div></div>
+        </div><p class="illustration-note">Illustrative workflow. Actual findings and outcomes depend on the machine and policy.</p>
+      </section>
+      <section class="section modes-section" id="capabilities" aria-labelledby="capabilities-title">
+        <div class="center-heading"><p class="eyebrow">Understand the loop.</p><h2 id="capabilities-title">Different tools.<br>One watchkeeper.</h2><p class="section-intro">Local monitoring, security updates, and AI investigation<br>work together without a central platform.</p></div>
+        <div class="tablist" role="tablist" aria-label="Fortmend capabilities"><button type="button" role="tab" id="tab-observe" aria-controls="panel-observe" aria-selected="true" tabindex="0">Observe</button><button type="button" role="tab" id="tab-patch" aria-controls="panel-patch" aria-selected="false" tabindex="-1">Patch</button><button type="button" role="tab" id="tab-investigate" aria-controls="panel-investigate" aria-selected="false" tabindex="-1">Investigate &amp; verify</button></div>
+        <div class="tabpanel" id="panel-observe" role="tabpanel" aria-labelledby="tab-observe" tabindex="0"><div class="panel-heading"><div><h3>Start with local evidence.</h3><p>Continuous sensors collect attack signals. Scheduled assessments compare installed source-package versions with official distro advisories, including backported fixes.</p></div><span class="panel-badge">ON THE MACHINE</span></div><div class="diagram" aria-hidden="true"><div class="node"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M4 4h16v16H4zM7 8h10M7 12h6M7 16h8"/></svg>Packages &amp; events</div><span class="connector">→</span><div class="node"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3"/></svg>Assess evidence</div><span class="connector">→</span><div class="node"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M5 4h14v16H5zM8 8h8M8 12h8M8 16h5"/></svg>Record findings</div></div><div class="panel-details"><div class="panel-detail"><h4>Attack signals</h4><p>SSH journal activity, PHP threat indicators, and cron or systemd persistence changes.</p></div><div class="panel-detail"><h4>Advisory sources</h4><p>Official Debian security tracker and Canonical Ubuntu OVAL data.</p></div><div class="panel-detail"><h4>Coverage stays visible</h4><p>Unknown applicability and sensor gaps remain explicit instead of becoming a clean bill of health.</p></div></div></div>
+        <div class="tabpanel" id="panel-patch" role="tabpanel" aria-labelledby="tab-patch" tabindex="0" hidden><div class="panel-heading"><div><h3>Security updates, with checks.</h3><p>Use authenticated APT security origins to apply eligible updates. Record the update result, audit package state, and check configured services afterward.</p></div><span class="panel-badge">DISTRO-NATIVE UPDATES</span></div><div class="diagram" aria-hidden="true"><div class="node"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M6 3h12v18H6zM9 7h6M9 11h6M9 15h4"/></svg>Security origins</div><span class="connector">→</span><div class="node"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 3v13m-5-5 5 5 5-5M4 18v3h16v-3"/></svg>Apply updates</div><span class="connector">→</span><div class="node"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="m12 2 8 4v6c0 5-8 10-8 10S4 17 4 12V6l8-4Z"/><path d="m8 12 3 3 5-6"/></svg>Check &amp; record</div></div><div class="panel-details"><div class="panel-detail"><h4>Security-only origins</h4><p>Keep update selection tied to the distro's authenticated security repositories.</p></div><div class="panel-detail"><h4>Reboots are explicit</h4><p>Automatic reboots are off by default. A pending reboot stays visible.</p></div><div class="panel-detail"><h4>Failures stop the loop</h4><p>Failed or interrupted updates leave a durable receipt and require acknowledgement before retrying.</p></div></div></div>
+        <div class="tabpanel" id="panel-investigate" role="tabpanel" aria-labelledby="tab-investigate" tabindex="0" hidden><div class="panel-heading"><div><h3>Investigate. Repair. Look again.</h3><p>Connect Codex with your ChatGPT account. Full-control mode gives it the VM's tools to investigate and repair, followed by independent checks of findings and service health.</p></div><span class="panel-badge">CODEX / CHATGPT</span></div><div class="diagram" aria-hidden="true"><div class="node"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M4 4h16v16H4zM8 8l3 4-3 4m5 0h4"/></svg>Investigate &amp; act</div><span class="connector">→</span><div class="node"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="8"/><path d="m8 12 3 3 5-6"/></svg>Recheck evidence</div><span class="connector">→</span><div class="node"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M5 4h14v16H5zM8 8h8M8 12h8M8 16h5"/></svg>Record outcome</div></div><div class="panel-details"><div class="panel-detail"><h4>Full root authority</h4><p>The AI can run commands and change your VM. Review your policy and keep a recoverable backup.</p></div><div class="panel-detail"><h4>Evidence before claims</h4><p>Preserve incident evidence and record actions. A claimed repair still needs verification.</p></div><div class="panel-detail"><h4>Unresolved means unresolved</h4><p>Remaining findings or unknown coverage stay visible. No model can promise a vulnerability-free machine.</p></div></div></div>
+      </section>
+      <section class="install-section" id="install" aria-labelledby="install-title"><div class="install-panel"><p class="eyebrow">One machine. One command.</p><h2 id="install-title">Give your VM a watchkeeper.</h2><p>Run inside your Ubuntu or Debian VM.<br>The installer guides you through setup and Codex sign-in.</p><div class="command"><span class="prompt" aria-hidden="true">$</span><code id="install-command">curl -fsSL https://fortmend.vercel.app/install.sh | sudo sh</code><button class="copy" id="copy-install" type="button" aria-label="Copy install command"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" aria-hidden="true"><rect x="5" y="5" width="8" height="9" rx="1.5"/><path d="M10 5V2H2v9h3"/></svg><span>Copy</span></button></div><p class="install-note">Root access is required. Full-control AI can change your VM; start with a recoverable machine and review your policy. <a href="https://github.com/ErzenXz/fortmend/blob/main/site/install.sh">Inspect the installer ↗</a></p><span id="copy-status" class="sr-only" role="status" aria-live="polite"></span></div></section>
+      <p class="limit-note">Fortmend is a developer preview for Ubuntu 24.04 and Debian 12 with systemd. Coverage depends on sensors and advisory data; successful checks cannot prove a machine is clean. Fleet coordination and container support are future work. <a href="https://github.com/ErzenXz/fortmend/blob/main/docs/TESTING.md">See what we test.</a></p>
+    </div>
+  </main>
+  <footer class="site-footer"><div class="footer-brand"><a class="brand" href="./"><img src="fortmend-mark.svg" alt="">Fortmend</a><p class="footer-tagline">Fortify + mend.<br>An autonomous security engineer for your Linux server.</p></div><div><p class="footer-title">Get started</p><div class="footer-links"><a href="#install">Install Fortmend</a><a href="https://github.com/ErzenXz/fortmend/blob/main/docs/LINUX.md">Setup &amp; configuration</a><a href="https://github.com/ErzenXz/fortmend/blob/main/docs/TESTING.md">Testing &amp; verification</a></div></div><div><p class="footer-title">Open by design</p><div class="footer-links"><a href="https://github.com/ErzenXz/fortmend">Source code <span aria-hidden="true">↗</span></a><a href="https://github.com/ErzenXz/fortmend/blob/main/docs/IMPLEMENTATION.md">Implementation status</a><a href="https://github.com/ErzenXz/fortmend/blob/main/LICENSE">AGPL-3.0 license</a></div></div><div class="footer-bottom">FORTMEND / SELF-HOSTED DEVELOPER PREVIEW<span>YOUR INFRASTRUCTURE. YOUR CONTROL.</span></div></footer>
   <script>
     (() => {
+      const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+      const finePointer = window.matchMedia('(pointer: fine)');
       const copyButton = document.getElementById('copy-install');
       const command = document.getElementById('install-command');
-      const copyStatus = document.getElementById('copy-status');
-      let resetCopy;
+      let copyTimeout;
       copyButton.addEventListener('click', async () => {
+        let message;
         try {
           await navigator.clipboard.writeText(command.textContent.trim());
           copyButton.querySelector('span').textContent = 'Copied';
-          copyStatus.textContent = 'Install command copied to clipboard.';
+          message = 'Install command copied to clipboard.';
         } catch {
           const selection = window.getSelection();
           const range = document.createRange();
           range.selectNodeContents(command);
-          selection.removeAllRanges();
-          selection.addRange(range);
+          selection.removeAllRanges(); selection.addRange(range);
           copyButton.querySelector('span').textContent = 'Selected';
-          copyStatus.textContent = 'Command selected. Copy it using your keyboard.';
+          message = 'Command selected. Copy it using your keyboard.';
         }
-        window.clearTimeout(resetCopy);
-        resetCopy = window.setTimeout(() => { copyButton.querySelector('span').textContent = 'Copy'; }, 2500);
+        document.getElementById('copy-status').textContent = message;
+        clearTimeout(copyTimeout);
+        copyTimeout = setTimeout(() => { copyButton.querySelector('span').textContent = 'Copy'; }, 2500);
       });
-      const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
-      const finePointer = window.matchMedia('(pointer: fine)');
-      document.querySelectorAll('.card').forEach(card => {
-        card.addEventListener('pointermove', event => {
-          if (reducedMotion.matches || !finePointer.matches) return;
-          const rect = card.getBoundingClientRect();
-          card.style.setProperty('--x', `${event.clientX - rect.left}px`);
-          card.style.setProperty('--y', `${event.clientY - rect.top}px`);
+      const tabs = [...document.querySelectorAll('[role="tab"]')];
+      const selectTab = tab => {
+        tabs.forEach(item => {
+          const selected = item === tab;
+          item.setAttribute('aria-selected', String(selected)); item.tabIndex = selected ? 0 : -1;
+          document.getElementById(item.getAttribute('aria-controls')).hidden = !selected;
+        });
+      };
+      tabs.forEach((tab, index) => {
+        tab.addEventListener('click', () => selectTab(tab));
+        tab.addEventListener('keydown', event => {
+          let target;
+          if (event.key === 'ArrowRight') target = tabs[(index + 1) % tabs.length];
+          if (event.key === 'ArrowLeft') target = tabs[(index + tabs.length - 1) % tabs.length];
+          if (event.key === 'Home') target = tabs[0];
+          if (event.key === 'End') target = tabs[tabs.length - 1];
+          if (target) { event.preventDefault(); selectTab(target); target.focus(); }
         });
       });
-      const canvas = document.getElementById('field');
+      document.querySelectorAll('.feature').forEach(card => card.addEventListener('pointermove', event => {
+        if (reducedMotion.matches || !finePointer.matches) return;
+        const rect = card.getBoundingClientRect();
+        card.style.setProperty('--x', `${event.clientX - rect.left}px`); card.style.setProperty('--y', `${event.clientY - rect.top}px`);
+      }));
+      const canvas = document.getElementById('wave-field');
       const context = canvas.getContext('2d');
-      if (!context) return;
-      const visual = document.querySelector('.visual');
-      let width = 0, height = 0, points = [], frame = 0, visible = true;
-      let pointer = { x: -1000, y: -1000 };
-      const resize = () => {
-        const bounds = canvas.getBoundingClientRect();
-        width = bounds.width; height = bounds.height;
-        const scale = Math.min(window.devicePixelRatio || 1, 2);
-        canvas.width = Math.round(width * scale); canvas.height = Math.round(height * scale);
-        context.setTransform(scale, 0, 0, scale, 0, 0);
-        points = [];
-        const spacing = width < 400 ? 30 : 34;
-        for (let y = 15; y < height; y += spacing) for (let x = 15; x < width; x += spacing) {
-          points.push({ x, y, px:x, py:y, phase:Math.random() * Math.PI * 2 });
-        }
-        if (reducedMotion.matches) draw(0);
-      };
-      function draw(time) {
+      const hero = document.querySelector('.hero');
+      const motionButton = document.getElementById('motion-toggle');
+      let width = 0, height = 0, frame = 0, visible = true, paused = reducedMotion.matches;
+      let time = 0, lastDraw = 0;
+      const pointer = { x:-1000, y:-1000 };
+      function draw(timestamp) {
         context.clearRect(0, 0, width, height);
-        const animated = !reducedMotion.matches;
-        for (const point of points) {
-          const dx = point.x - pointer.x, dy = point.y - pointer.y;
-          const distance = Math.hypot(dx, dy), influence = animated ? Math.max(0, 1 - distance / 150) : 0;
-          const displacement = influence * influence * 27;
-          const targetX = point.x + (distance > 0 ? dx / distance * displacement : 0);
-          const targetY = point.y + (distance > 0 ? dy / distance * displacement : 0);
-          point.px += (targetX - point.px) * .08;
-          point.py += (targetY - point.py) * .08;
-          const edge = Math.max(0, 1 - Math.hypot((point.x - width / 2) / (width / 2), (point.y - height / 2) / (height / 2)));
-          const pulse = animated ? .7 + Math.sin(time * .0006 + point.phase) * .3 : .7;
-          const alpha = edge * (.18 + pulse * .18 + influence * .5);
-          context.fillStyle = `rgba(190,199,212,${alpha})`;
-          context.beginPath(); context.arc(point.px, point.py, .8 + influence * .6, 0, Math.PI * 2); context.fill();
-          if (influence > .22) {
-            context.strokeStyle = `rgba(190,199,212,${influence * .08})`;
-            context.beginPath(); context.moveTo(point.px - 4, point.py); context.lineTo(point.px + 4, point.py); context.moveTo(point.px, point.py - 4); context.lineTo(point.px, point.py + 4); context.stroke();
+        const spacing = width < 600 ? 13 : 14;
+        const rows = Math.ceil(height / spacing) + 12, columns = Math.ceil(width / spacing) + 4;
+        for (let row = 0; row < rows; row++) {
+          const baseY = row * spacing - 70;
+          const depth = row / rows;
+          for (let col = 0; col < columns; col++) {
+            const baseX = col * spacing - 24;
+            const wave = Math.sin(baseX * .0054 + depth * 4.6 + timestamp * .00017) * (27 + depth * 50) + Math.sin(baseX * .0022 - timestamp * .00011 + depth * 6.2) * 31;
+            let x = baseX + Math.sin(depth * 5 + timestamp * .00007) * 7;
+            let y = baseY + wave;
+            const distance = Math.hypot(x - pointer.x, y - pointer.y);
+            const influence = !paused && finePointer.matches ? Math.max(0, 1 - distance / 170) : 0;
+            if (influence > 0 && distance > 0) { x += (x - pointer.x) / distance * influence * 16; y += (y - pointer.y) / distance * influence * 16; }
+            const ridge = Math.pow((Math.sin(baseX * .0054 + depth * 4.6 + timestamp * .00017) + 1) / 2, 5);
+            const edge = Math.max(0, Math.min(1, x / 80, (width - x) / 80));
+            const alpha = (.055 + ridge * .16 + depth * .08 + influence * .2) * edge;
+            const radius = .7 + ridge * .45 + influence * .45;
+            context.fillStyle = `rgba(219,219,219,${alpha})`;
+            context.beginPath(); context.arc(x, y, radius, 0, Math.PI * 2); context.fill();
           }
         }
       }
-      const loop = time => { frame = 0; if (visible && !document.hidden) draw(time); if (visible && !document.hidden && !reducedMotion.matches) frame = requestAnimationFrame(loop); };
-      const start = () => { if (!frame && visible && !document.hidden && !reducedMotion.matches) frame = requestAnimationFrame(loop); };
-      visual.addEventListener('pointermove', event => {
-        if (!finePointer.matches || reducedMotion.matches) return;
-        const bounds = canvas.getBoundingClientRect(); pointer.x = event.clientX - bounds.left; pointer.y = event.clientY - bounds.top;
-      });
-      visual.addEventListener('pointerleave', () => { pointer.x = -1000; pointer.y = -1000; });
+      function loop(timestamp) {
+        frame = 0;
+        if (!visible || document.hidden || paused || !context) return;
+        if (timestamp - lastDraw > 32) { time += Math.min(timestamp - lastDraw, 64); lastDraw = timestamp; draw(time); }
+        frame = requestAnimationFrame(loop);
+      }
+      function start() { if (context && !frame && visible && !document.hidden && !paused) { lastDraw = performance.now(); frame = requestAnimationFrame(loop); } }
+      function updateMotionButton() {
+        motionButton.setAttribute('aria-pressed', String(paused));
+        motionButton.setAttribute('aria-label', paused ? 'Play background animation' : 'Pause background animation');
+        motionButton.querySelector('span').textContent = paused ? 'Play motion' : 'Pause motion';
+        motionButton.querySelector('path').setAttribute('d', paused ? 'M2 1 9 5 2 9Z' : 'M2 1h2v8H2zm4 0h2v8H6z');
+      }
+      function resize() {
+        if (!context) return;
+        const bounds = canvas.getBoundingClientRect(); width = bounds.width; height = bounds.height;
+        const scale = Math.min(window.devicePixelRatio || 1, 2);
+        canvas.width = Math.round(width * scale); canvas.height = Math.round(height * scale); context.setTransform(scale,0,0,scale,0,0); draw(time);
+      }
+      motionButton.addEventListener('click', () => { paused = !paused; if (paused) { cancelAnimationFrame(frame); frame = 0; } else start(); updateMotionButton(); });
+      reducedMotion.addEventListener('change', () => { paused = reducedMotion.matches; cancelAnimationFrame(frame); frame = 0; pointer.x = -1000; pointer.y = -1000; updateMotionButton(); if (paused && context) draw(time); else start(); });
+      hero.addEventListener('pointermove', event => { if (paused || !finePointer.matches) return; const rect = canvas.getBoundingClientRect(); pointer.x = event.clientX - rect.left; pointer.y = event.clientY - rect.top; });
+      hero.addEventListener('pointerleave', () => { pointer.x = -1000; pointer.y = -1000; });
       window.addEventListener('resize', resize, { passive:true });
       document.addEventListener('visibilitychange', start);
-      reducedMotion.addEventListener('change', () => { if (reducedMotion.matches) { cancelAnimationFrame(frame); frame = 0; pointer = { x:-1000,y:-1000 }; draw(0); } else start(); });
-      if ('IntersectionObserver' in window) new IntersectionObserver(entries => { visible = entries[0].isIntersecting; start(); }).observe(visual);
-      resize(); start();
+      if ('IntersectionObserver' in window) new IntersectionObserver(entries => { visible = entries[0].isIntersecting; start(); }, {threshold:0}).observe(hero);
+      updateMotionButton(); resize(); start();
     })();
   </script>
 </body>
