@@ -10,6 +10,7 @@ import hashlib
 import io
 import json
 import os
+import re
 from pathlib import Path
 import shutil
 import subprocess
@@ -130,10 +131,12 @@ fi
         self.write(self.bin / name, content)
 
     def render(self, text):
-        text = text.replace("PATH=/usr/sbin:/usr/bin:/sbin:/bin", 'PATH="' + str(self.bin) + ':$PATH"')
-        for prefix in ["/usr/local/", "/var/lib/", "/etc/", "/run/", "/tmp/", "/dev/tty"]:
-            text = text.replace(prefix, str(self.root) + prefix)
-        return text
+        # A single pass prevents an inserted /tmp fixture prefix from being
+        # rewritten again on Linux (macOS temp paths usually start /private).
+        text = re.sub(r"/usr/local/|/var/lib/|/etc/|/run/|/tmp/|/dev/tty",
+                      lambda match: str(self.root) + match.group(0), text)
+        # Insert the fixture command directory only after path rewriting.
+        return text.replace("PATH=/usr/sbin:/usr/bin:/sbin:/bin", 'PATH="' + str(self.bin) + ':$PATH"')
 
     def hash(self, path):
         return hashlib.sha256(path.read_bytes()).hexdigest()

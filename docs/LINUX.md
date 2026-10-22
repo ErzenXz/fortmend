@@ -11,7 +11,7 @@ Full-control AI is instructed to preserve evidence and recoverable application b
 Run inside an Ubuntu 24.04 or Debian 12 VM with systemd, sudo, and curl:
 
 ```sh
-curl -fsSL https://raw.githubusercontent.com/ErzenXz/fortmend/main/site/install.sh | sudo sh
+curl -fsSL https://fortmend.vercel.app/install.sh | sudo sh
 ```
 
 The bootstrap pins Fortmend `v0.2.0-preview.1`, downloads the matching amd64 or
@@ -53,7 +53,7 @@ To download and inspect the bootstrap, install without sign-in/start, or provide
 a reviewed local policy:
 
 ```sh
-curl -fsSL https://raw.githubusercontent.com/ErzenXz/fortmend/main/site/install.sh -o /tmp/fortmend-install.sh
+curl -fsSL https://fortmend.vercel.app/install.sh -o /tmp/fortmend-install.sh
 less /tmp/fortmend-install.sh
 sudo sh /tmp/fortmend-install.sh --no-start
 # Optional on a fresh installation:
@@ -169,7 +169,7 @@ migration requirements separately.
 Run the bootstrap with the explicit legacy-state opt-in:
 
 ```sh
-curl -fsSL https://raw.githubusercontent.com/ErzenXz/fortmend/main/site/install.sh | sudo sh -s -- --retain-legacy-state
+curl -fsSL https://fortmend.vercel.app/install.sh | sudo sh -s -- --retain-legacy-state
 ```
 
 `--retain-legacy-state` permits `/var/lib/aegis` only when an existing

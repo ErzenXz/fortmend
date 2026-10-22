@@ -149,7 +149,7 @@ if [ "$(jq -r '.ai.enabled' /etc/fortmend/linux.json)" = true ]; then
     if ! /usr/local/bin/fortmend ai status --state-dir "$state" --binary "$codex_binary" | jq -e '.account.type == "chatgpt"' >/dev/null; then
         # The script itself may arrive over stdin. Device login must read the
         # controlling terminal, never consume the remainder of this script.
-        if ! { : </dev/tty; } 2>/dev/null; then
+        if ! ( : </dev/tty ) 2>/dev/null; then
             fail 'no terminal for ChatGPT sign-in. Rerun with --no-start, then sign in and start manually (see docs/LINUX.md).'
         fi
         /usr/local/bin/fortmend ai login --state-dir "$state" --binary "$codex_binary" </dev/tty || fail 'ChatGPT sign-in did not complete; protection has not been started'

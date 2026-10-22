@@ -8,9 +8,9 @@
   <meta property="og:title" content="Fortmend — Your server. Under watch.">
   <meta property="og:description" content="An autonomous security engineer that lives inside your Linux VM. Observe. Repair. Verify.">
   <meta property="og:type" content="website">
-  <meta property="og:url" content="https://erzenxz.github.io/fortmend/">
+  <meta property="og:url" content="https://fortmend.vercel.app/">
   <title>Fortmend — Your server. Under watch.</title>
-  <link rel="canonical" href="https://erzenxz.github.io/fortmend/">
+  <link rel="canonical" href="https://fortmend.vercel.app/">
   <link rel="icon" href="fortmend-mark.svg" type="image/svg+xml">
   <style>
     :root { color-scheme:dark; --bg:#08090b; --ink:#f0f0f1; --muted:#97999f; --line:rgba(255,255,255,.11); --mono:ui-monospace,"SFMono-Regular",Consolas,monospace; }
@@ -136,7 +136,7 @@
       </section>
       <section class="install-section" id="install" aria-labelledby="install-title"><div class="install-panel">
         <div class="install-header"><div><p class="kicker">One machine. One command.</p><h2 id="install-title">Give your VM a watchkeeper.</h2><p>Run inside your Ubuntu or Debian VM. The installer guides you through setup.</p></div><span class="linux-badge">LINUX / SYSTEMD</span></div>
-        <div class="command"><span class="prompt" aria-hidden="true">$</span><code id="install-command">curl -fsSL https://raw.githubusercontent.com/ErzenXz/fortmend/main/site/install.sh | sudo sh</code><button class="copy" id="copy-install" type="button" aria-label="Copy install command"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" aria-hidden="true"><rect x="5" y="5" width="8" height="9" rx="1.5"/><path d="M10 5V2H2v9h3"/></svg><span>Copy</span></button></div>
+        <div class="command"><span class="prompt" aria-hidden="true">$</span><code id="install-command">curl -fsSL https://fortmend.vercel.app/install.sh | sudo sh</code><button class="copy" id="copy-install" type="button" aria-label="Copy install command"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" aria-hidden="true"><rect x="5" y="5" width="8" height="9" rx="1.5"/><path d="M10 5V2H2v9h3"/></svg><span>Copy</span></button></div>
         <div class="install-note"><p>Root access is required. Sign in to Codex when prompted. Full-control AI can change your VM; start with a recoverable machine and review your policy.</p><a href="https://github.com/ErzenXz/fortmend/blob/main/site/install.sh">Inspect the installer <span aria-hidden="true">↗</span></a></div><span id="copy-status" class="sr-only" role="status" aria-live="polite"></span>
       </div></section>
       <section class="principle" aria-labelledby="principle-title"><div><p class="kicker">Your infrastructure. Your control.</p><h2 id="principle-title">Close to the system.<br>Clear about its limits.</h2></div><div><p>Fortmend runs locally as a systemd service. No central platform is required. Connect Codex with your ChatGPT account for autonomous investigation and repair.</p><p>This is a developer preview. Findings depend on sensor coverage and advisory data; a successful check cannot prove a machine is clean. Fleet coordination and container support are future work.</p><a href="https://github.com/ErzenXz/fortmend/blob/main/docs/TESTING.md">See what we test <span class="arrow" aria-hidden="true">↗</span></a></div></section>

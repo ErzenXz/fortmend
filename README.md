@@ -24,7 +24,7 @@ account to investigate and repair problems.
 Run this **inside the VM you want to protect**:
 
 ```sh
-curl -fsSL https://raw.githubusercontent.com/ErzenXz/fortmend/main/site/install.sh | sudo sh
+curl -fsSL https://fortmend.vercel.app/install.sh | sudo sh
 ```
 
 Open the ChatGPT sign-in link shown in the terminal. Finish signing in, and
