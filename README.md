@@ -1,173 +1,119 @@
 <div align="center">
-  <img src="site/aegis-mark.svg" width="88" alt="Aegis shield">
+  <img src="site/aegis-mark.svg" width="80" alt="Fortmend shield">
 
-# Aegis
+# Fortmend
 
-**Endpoint defense that keeps its judgment separate from its authority.**
+**An autonomous security engineer for your Linux server.**
+
+Find risks. Apply fixes. Check the results.
 
 [![CI](https://github.com/ErzenXz/aegis/actions/workflows/ci.yml/badge.svg)](https://github.com/ErzenXz/aegis/actions/workflows/ci.yml)
 [![License: AGPL-3.0](https://img.shields.io/badge/license-AGPL--3.0-315d52.svg)](LICENSE)
-[![Status: developer preview](https://img.shields.io/badge/status-developer%20preview-b9523b.svg)](docs/IMPLEMENTATION.md)
+[![Developer preview](https://img.shields.io/badge/status-developer%20preview-b9523b.svg)](docs/IMPLEMENTATION.md)
 
-[Homepage](https://aegis.erzen.dev/) · [Implementation status](docs/IMPLEMENTATION.md) · [Third-party notices](THIRD_PARTY_NOTICES.md)
 </div>
 
----
+Fortmend runs inside your VM. It checks installed software for vulnerabilities,
+monitors attacks, applies security updates, and uses Codex with your ChatGPT
+account to investigate and repair problems.
 
-Aegis is a self-hosted, cross-platform endpoint-defense developer preview for
-solo administrators. A deterministic endpoint agent collects and classifies
-security events offline. A tightly constrained, vendored
-[`fx`](https://github.com/vercel-labs/fx) planner can investigate those events
-through seven typed security tools when a model provider is available.
+**Current target:** Ubuntu 24.04 and Debian 12 VMs running systemd.
+Fortmend is the new product name; the repository, command, and service still use
+`aegis`.
 
-> [!WARNING]
-> Aegis is not production-ready antivirus or a replacement for a maintained
-> EDR. The current preview does not install kernel sensors, enable autonomous
-> host repair, or make a machine impossible to compromise. Privileged response
-> remains locked until each action has a tested recovery adapter.
+## Quick start
 
-## What works now
+Run these steps **inside the VM you want to protect**, using an account with sudo.
 
-- One Go binary for macOS, Linux, and Windows: `hub`, `agent`, `enroll`,
-  `scan`, `status`, `doctor`, and `provider` commands.
-- A self-hosted HTTPS hub with a local CA, device-owned CSRs, single-use
-  enrollment, certificate-bound event identity, SQLite storage, retention
-  metadata, tamper-evident audit chaining, SSE updates, and an embedded incident
-  timeline.
-- A bounded durable endpoint queue that keeps collecting while the hub is
-  unavailable and replays events in order.
-- Host/capability snapshots plus opt-in osquery, Trivy, and YARA adapters.
-- Deterministic signature, vulnerability, persistence, authentication, and
-  ransomware-burst findings.
-- A recovery-gated response executor that requires deterministic evidence,
-  confidence `>= 0.95`, 24 hours of observation, healthy telemetry, verified
-  rollback, idempotency, and post-action health checks.
-- fx v0.0.5 vendored at commit
-  `df7e6245e1992758d4060c97477ceafa27770551`, with an `fx acp --aegis`
-  profile that disables native fx tools and accepts only ACP-provided MCP tools.
-- A seven-tool security MCP surface: `get_case`, `search_events`,
-  `collect_evidence`, `get_host_state`, `simulate_response`,
-  `request_response`, and `verify_response`.
-- Ed25519 update-manifest signing and tamper verification primitives.
+### 1. Prepare the VM
 
-## Build and test
-
-Install the latest preview and start guided onboarding:
+Install [Go 1.25 or newer](https://go.dev/doc/install) and the
+[official Codex CLI](https://learn.chatgpt.com/docs/cli).
+Use the standalone Linux Codex binary at `/usr/local/bin/codex`, owned by root
+and not writable by other users. See [Codex setup details](docs/LINUX.md#provision-codex-and-sign-in).
 
 ```sh
-curl -fsSL https://aegis.erzen.dev/install.sh | sh
+sudo apt-get update
+sudo apt-get install -y git make ca-certificates unattended-upgrades
 ```
 
-Windows PowerShell:
-
-```powershell
-irm https://aegis.erzen.dev/install.ps1 | iex
-```
-
-Requirements: Go 1.25. Zig 0.16 is needed only for the vendored fx planner.
+### 2. Install Fortmend
 
 ```sh
-make test
+git clone https://github.com/ErzenXz/aegis.git
+cd aegis
 make build
-make fx-build       # Linux/macOS planner
+sudo sh packaging/linux/install.sh \
+  --binary ./bin/aegis \
+  --policy packaging/linux/linux.example.json
 ```
 
-Run a local preview scan:
+Edit the policy to match your applications:
 
 ```sh
-./bin/aegis scan --device-id my-machine
-./bin/aegis scan --device-id my-machine --osquery
-./bin/aegis scan --device-id my-machine --trivy-target /
-./bin/aegis scan --device-id my-machine \
-  --yara-rules /path/to/rules --yara-targets /tmp,/usr/local/bin
+sudoedit /etc/aegis/linux.json
 ```
 
-## Hub and enrollment
+Set `webRoots` to your application folders and `healthServices` to the services
+that must stay healthy. The example uses `/var/www/html` and `ssh.service`.
+Only list services installed and running on this VM.
 
-Start the hub with certificate names matching the URL devices will use:
+The example enables automatic security updates, PHP quarantine, and
+**full-control AI**. Automatic reboots are off.
+
+> Full-control AI can execute commands and change system and application files
+> as root. Start with a backed-up VM and review the policy before enabling it.
+
+### 3. Sign in and start
 
 ```sh
-./bin/aegis hub \
-  --addr :7443 \
-  --data-dir ~/.aegis-hub \
-  --tls-hosts localhost,127.0.0.1,aegis.lan
+sudo aegis ai login
+sudo systemctl enable --now aegis-protect.service
+sudo systemctl status aegis-protect.service --no-pager
 ```
 
-The hub prints a one-run enrollment token and the CA path. Securely copy the CA
-to the endpoint, then enroll:
+Open the device-login URL shown in your terminal and complete ChatGPT sign-in.
+Then start the service with the next command.
+
+Watch activity:
 
 ```sh
-./bin/aegis enroll \
-  --hub https://aegis.lan:7443 \
-  --token TOKEN_FROM_HUB \
-  --ca /path/to/ca.pem \
-  --device-id workstation-1
-
-./bin/aegis agent --once
-./bin/aegis agent
+sudo journalctl -u aegis-protect.service -f
 ```
 
-Open `https://aegis.lan:7443/` to view the timeline. The hub CA is private, so
-the browser must trust it locally during development. Do not expose this
-preview directly to the public internet.
+The service keeps running after you close the terminal.
 
-## Provider routes
+## What it does
 
-Build/install `aegis-fx`, or set `AEGIS_FX_PATH` to the patched fx binary.
-The wrapper preserves fx's supported authentication routes:
+- **Checks vulnerabilities:** matches installed package versions against official
+  Ubuntu and Debian advisories, including vendor backports.
+- **Monitors attacks:** watches SSH authentication, systemd/cron changes, and
+  suspicious PHP files in your configured webroots.
+- **Applies repairs:** installs security updates, preserves quarantined evidence,
+  and lets Codex inspect and repair the VM and its applications.
+- **Verifies results:** checks package state, configured services, and original
+  findings. Reports unresolved problems explicitly.
+
+It works locally without a hub. Fleet management and container packaging are
+future work.
+
+## Details
+
+- [Configuration, authentication, and recovery](docs/LINUX.md)
+- [Tests and real VM verification](docs/TESTING.md)
+- [Implementation status and limitations](docs/IMPLEMENTATION.md)
+
+This is a developer preview. Detection has coverage limits, and a successful
+repair does not establish that the entire VM is uncompromised.
+
+## Development
 
 ```sh
-aegis provider login vercel
-aegis provider setup          # AI Gateway API key
-aegis provider login codex
-aegis provider login grok
-aegis provider status
+go test -race ./...
+go vet ./...
 ```
-
-Detection and event retention never depend on provider availability. Provider
-tokens remain in fx's protected profile storage and are not written to Aegis's
-SQLite database.
-
-## Platform status
-
-| Platform | Aegis agent/hub | fx planner | Preview sensors |
-| --- | --- | --- | --- |
-| Ubuntu 22.04/24.04, Debian 12 | Buildable | Native Zig | Host + osquery/Trivy/YARA adapters |
-| macOS 14+ x64/arm64 | Buildable | Native Zig | Host + osquery/Trivy/YARA adapters |
-| Windows 11, Server 2022/2025 | Buildable | **Port incomplete** | Host + osquery/Trivy/YARA adapters |
-
-The pinned fx source currently produces 15 Windows errors even for its narrower
-N-API build, mostly from POSIX permissions, realpath, poll, and session storage.
-Aegis therefore reports the Windows planner as unavailable rather than falling
-back to an unsafe shell bridge. The Go protection path and deterministic
-detection continue to work. See [the implementation status](docs/IMPLEMENTATION.md).
-
-Deep macOS Endpoint Security monitoring additionally requires Apple's
-entitlement, signing, and notarization. The preview does not pretend that
-unsigned log polling is equivalent.
-
-## Security model
-
-- Security evidence is untrusted data. It is passed to fx as a separate JSON
-  resource and never interpolated into trusted instructions.
-- fx has no direct shell, filesystem mutation, web, skill-installation, or
-  arbitrary MCP authority in the Aegis profile.
-- The reasoner may propose actions; only the deterministic response executor
-  can authorize privileged effects.
-- Developer-preview response tools return a rejection until a platform adapter
-  demonstrates snapshot, health verification, and rollback.
-- Raw-file upload is disabled; current evidence consists of bounded normalized
-  metadata.
 
 ## License
 
-Original Aegis code is licensed under AGPL-3.0. The vendored fx source remains
-under Apache-2.0; its license and third-party notices are retained inside
-`third_party/fx` and summarized in `THIRD_PARTY_NOTICES.md`.
-
-## Contributing
-
-Start with an issue describing the detector, platform adapter, or recovery
-invariant you want to add. Security-sensitive changes should include a failure
-test and must preserve the rule that model output cannot directly acquire host
-authority.
+[AGPL-3.0](LICENSE). The vendored fx code retains its Apache-2.0 license;
+see [third-party notices](THIRD_PARTY_NOTICES.md).
