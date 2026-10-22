@@ -64,6 +64,7 @@ jobs:
       - run: zig build -Doptimize=ReleaseSafe
       - run: python3 ../../scripts/test-fx-profile.py ./zig-out/bin/fx
       - uses: actions/upload-artifact@v4
+        if: always()
         with:
           name: fortmend-fx-${{ matrix.os }}
           path: third_party/fx/zig-out/bin/fx
