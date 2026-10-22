@@ -7,8 +7,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/ErzenXz/aegis/internal/agent"
-	"github.com/ErzenXz/aegis/internal/model"
+	"github.com/ErzenXz/fortmend/internal/agent"
+	"github.com/ErzenXz/fortmend/internal/model"
 )
 
 func TestOfflineQueueRetainsFailedEventsAndDrainsInOrder(t *testing.T) {

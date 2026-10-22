@@ -1,4 +1,4 @@
-# Aegis vendoring record
+# Fortmend vendoring record
 
 - Canonical repository: `https://github.com/vercel-labs/fx`
 - Upstream tag: `v0.0.5`
@@ -7,13 +7,13 @@
 
 ## Local patch policy
 
-Aegis carries the smallest reviewed patch set needed for a security-only ACP
+Fortmend carries the smallest reviewed patch set needed for a security-only ACP
 profile and platform support. Syncs must start from a signed/tagged upstream
-release, review the complete upstream diff, rerun the Aegis and fx suites, and
+release, review the complete upstream diff, rerun the Fortmend and fx suites, and
 record verification results in `docs/IMPLEMENTATION.md`.
 
 Current patch:
 
-- `fx acp --aegis` sets `allow_native_tools=false` and
+- `fx acp --fortmend` sets `allow_native_tools=false` and
   `allow_acp_mcp=true`, ensuring the planner can see only tools supplied by the
-  trusted Aegis ACP client.
+  trusted Fortmend ACP client.

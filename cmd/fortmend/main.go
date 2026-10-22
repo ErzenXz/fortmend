@@ -10,13 +10,13 @@ import (
 	"os/signal"
 	"syscall"
 
-	"github.com/ErzenXz/aegis/internal/model"
-	"github.com/ErzenXz/aegis/internal/sensors"
+	"github.com/ErzenXz/fortmend/internal/model"
+	"github.com/ErzenXz/fortmend/internal/sensors"
 )
 
 const (
-	aegisVersion = "0.1.0-dev"
-	fxVersion    = "v0.0.5"
+	fortmendVersion = "0.2.0-preview.1"
+	fxVersion       = "v0.0.5"
 )
 
 func main() {
@@ -33,64 +33,64 @@ func run(ctx context.Context, args []string, stdout, stderr io.Writer) int {
 	switch args[0] {
 	case "protect":
 		if err := runProtect(ctx, args[1:], stdout, stderr); err != nil {
-			fmt.Fprintf(stderr, "aegis protect: %v\n", err)
+			fmt.Fprintf(stderr, "fortmend protect: %v\n", err)
 			return 1
 		}
 		return 0
 	case "ai":
 		if err := runAI(ctx, args[1:], stdout, stderr); err != nil {
-			fmt.Fprintf(stderr, "aegis ai: %v\n", err)
+			fmt.Fprintf(stderr, "fortmend ai: %v\n", err)
 			return 1
 		}
 		return 0
 	case "version", "--version", "-v":
-		fmt.Fprintf(stdout, "aegis %s (fx %s)\n", aegisVersion, fxVersion)
+		fmt.Fprintf(stdout, "fortmend %s (fx %s)\n", fortmendVersion, fxVersion)
 		return 0
 	case "scan":
 		if err := runScan(ctx, args[1:], stdout, stderr); err != nil {
-			fmt.Fprintf(stderr, "aegis scan: %v\n", err)
+			fmt.Fprintf(stderr, "fortmend scan: %v\n", err)
 			return 1
 		}
 		return 0
 	case "hub":
 		if err := runHub(ctx, args[1:], stdout, stderr); err != nil {
-			fmt.Fprintf(stderr, "aegis hub: %v\n", err)
+			fmt.Fprintf(stderr, "fortmend hub: %v\n", err)
 			return 1
 		}
 		return 0
 	case "enroll":
 		if err := runEnroll(ctx, args[1:], stdout, stderr); err != nil {
-			fmt.Fprintf(stderr, "aegis enroll: %v\n", err)
+			fmt.Fprintf(stderr, "fortmend enroll: %v\n", err)
 			return 1
 		}
 		return 0
 	case "agent":
 		if err := runAgent(ctx, args[1:], stdout, stderr); err != nil {
-			fmt.Fprintf(stderr, "aegis agent: %v\n", err)
+			fmt.Fprintf(stderr, "fortmend agent: %v\n", err)
 			return 1
 		}
 		return 0
 	case "status":
 		if err := runStatus(ctx, args[1:], stdout, stderr); err != nil {
-			fmt.Fprintf(stderr, "aegis status: %v\n", err)
+			fmt.Fprintf(stderr, "fortmend status: %v\n", err)
 			return 1
 		}
 		return 0
 	case "doctor":
 		if err := runDoctor(ctx, args[1:], stdout, stderr); err != nil {
-			fmt.Fprintf(stderr, "aegis doctor: %v\n", err)
+			fmt.Fprintf(stderr, "fortmend doctor: %v\n", err)
 			return 1
 		}
 		return 0
 	case "provider":
 		if err := runProvider(ctx, args[1:], stdout, stderr); err != nil {
-			fmt.Fprintf(stderr, "aegis provider: %v\n", err)
+			fmt.Fprintf(stderr, "fortmend provider: %v\n", err)
 			return 1
 		}
 		return 0
 	case "onboard":
 		if err := runOnboard(ctx, args[1:], stdout, stderr); err != nil {
-			fmt.Fprintf(stderr, "aegis onboard: %v\n", err)
+			fmt.Fprintf(stderr, "fortmend onboard: %v\n", err)
 			return 1
 		}
 		return 0
@@ -98,7 +98,7 @@ func run(ctx context.Context, args []string, stdout, stderr io.Writer) int {
 		fmt.Fprint(stdout, usage)
 		return 0
 	default:
-		fmt.Fprintf(stderr, "aegis: unknown command %q\n\n%s", args[0], usage)
+		fmt.Fprintf(stderr, "fortmend: unknown command %q\n\n%s", args[0], usage)
 		return 2
 	}
 }
@@ -137,18 +137,18 @@ func runScan(ctx context.Context, args []string, stdout, stderr io.Writer) error
 	return stream.Start(ctx, func(event model.SecurityEvent) error { return encoder.Encode(event) })
 }
 
-const usage = `Aegis — self-hosted autonomous endpoint defense.
+const usage = `Fortmend — self-hosted autonomous endpoint defense.
 
 Usage:
-  aegis hub       Run the self-hosted hub
-  aegis agent     Run the endpoint protection loop
-  aegis protect   Run Ubuntu/Debian monitoring, updates and autonomous repair
-  aegis ai        Sign in to ChatGPT or inspect Codex account status
-  aegis enroll    Enroll this device with a hub
-  aegis scan      Run a local developer-preview scan
-  aegis status    Show local or hub health
-  aegis doctor    Check sensor and planner readiness
-  aegis provider  Login, logout, or inspect an fx provider
-  aegis onboard   Guided hub or endpoint setup
-  aegis version   Print version information
+  fortmend hub       Run the self-hosted hub
+  fortmend agent     Run the endpoint protection loop
+  fortmend protect   Run Ubuntu/Debian monitoring, updates and autonomous repair
+  fortmend ai        Sign in to ChatGPT or inspect Codex account status
+  fortmend enroll    Enroll this device with a hub
+  fortmend scan      Run a local developer-preview scan
+  fortmend status    Show local or hub health
+  fortmend doctor    Check sensor and planner readiness
+  fortmend provider  Login, logout, or inspect an fx provider
+  fortmend onboard   Guided hub or endpoint setup
+  fortmend version   Print version information
 `

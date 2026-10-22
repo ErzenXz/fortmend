@@ -5,7 +5,7 @@ ZIG ?= zig
 
 build:
 	mkdir -p bin
-	$(GO) build -trimpath -o bin/aegis ./cmd/aegis
+	$(GO) build -trimpath -o bin/fortmend ./cmd/fortmend
 
 test:
 	$(GO) test ./...
@@ -21,7 +21,7 @@ check:
 
 fx-build:
 	cd third_party/fx && $(ZIG) build -Doptimize=ReleaseSafe
-	cp third_party/fx/zig-out/bin/fx bin/aegis-fx
+	cp third_party/fx/zig-out/bin/fx bin/fortmend-fx
 
 fx-test:
 	cd third_party/fx && $(ZIG) build test

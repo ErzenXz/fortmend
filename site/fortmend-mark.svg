@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 72" fill="none" role="img" aria-labelledby="title desc">
+  <title id="title">Fortmend</title>
+  <desc id="desc">A fortified shield with an open central passage</desc>
+  <path d="M32 3 58 12v23c0 14-10 25-26 34C16 60 6 49 6 35V12L32 3Z" fill="#101216" stroke="#eceef2" stroke-width="2.2" stroke-linejoin="round"/>
+  <path d="M20 46V23h8v7h8v-7h8v23M20 35h24M28 50V40h8v10" stroke="#eceef2" stroke-width="2.2" stroke-linejoin="round"/>
+</svg>

@@ -14,11 +14,11 @@ import (
 	"sync"
 	"time"
 
-	"github.com/ErzenXz/aegis/internal/agent"
-	"github.com/ErzenXz/aegis/internal/detection"
-	"github.com/ErzenXz/aegis/internal/model"
-	"github.com/ErzenXz/aegis/internal/reasoner"
-	"github.com/ErzenXz/aegis/internal/sensors"
+	"github.com/ErzenXz/fortmend/internal/agent"
+	"github.com/ErzenXz/fortmend/internal/detection"
+	"github.com/ErzenXz/fortmend/internal/model"
+	"github.com/ErzenXz/fortmend/internal/reasoner"
+	"github.com/ErzenXz/fortmend/internal/sensors"
 )
 
 type Runtime struct {

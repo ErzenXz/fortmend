@@ -22,7 +22,7 @@ jobs:
           cache: true
       - run: go test ./...
       - run: go vet ./...
-      - run: go build ./cmd/aegis
+      - run: go build ./cmd/fortmend
 
   linux-root:
     runs-on: ubuntu-24.04
@@ -32,6 +32,7 @@ jobs:
         with:
           go-version: '1.25.14'
           cache: true
+      - run: python3 scripts/test-install.py
       - run: go test -race ./...
       # Compile as the runner user; execute privilege/path/rename tests as root.
       # Package-update integration remains explicitly opt-in and is not run here.
@@ -40,9 +41,9 @@ jobs:
         run: |
           set -euo pipefail
           for package in codexapp monitor remediation protection; do
-            go test -c -o "$RUNNER_TEMP/aegis-$package.test" "./internal/$package"
-            sudo "$RUNNER_TEMP/aegis-$package.test" -test.v -test.timeout=2m
-            rm "$RUNNER_TEMP/aegis-$package.test"
+            go test -c -o "$RUNNER_TEMP/fortmend-$package.test" "./internal/$package"
+            sudo "$RUNNER_TEMP/fortmend-$package.test" -test.v -test.timeout=2m
+            rm "$RUNNER_TEMP/fortmend-$package.test"
           done
 
   fx-linux-macos:
@@ -61,3 +62,9 @@ jobs:
           version: 0.16.0
       - run: zig fmt --check src/
       - run: zig build -Doptimize=ReleaseSafe
+      - run: python3 ../../scripts/test-fx-profile.py ./zig-out/bin/fx
+      - uses: actions/upload-artifact@v4
+        with:
+          name: fortmend-fx-${{ matrix.os }}
+          path: third_party/fx/zig-out/bin/fx
+          retention-days: 1

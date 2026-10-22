@@ -11,19 +11,19 @@ import (
 
 func TestLinuxPolicyDefaultsAndExplicitAuthority(t *testing.T) {
 	path := filepath.Join(t.TempDir(), "policy.json")
-	if err := os.WriteFile(path, []byte(`{"schemaVersion":"aegis.linux/v1","ai":{"enabled":true,"mode":"full-control"},"securityUpdates":true}`), 0600); err != nil {
+	if err := os.WriteFile(path, []byte(`{"schemaVersion":"fortmend.linux/v1","ai":{"enabled":true,"mode":"full-control"},"securityUpdates":true}`), 0600); err != nil {
 		t.Fatal(err)
 	}
 	p, err := loadLinuxPolicy(path)
 	if err != nil {
 		t.Fatal(err)
 	}
-	if p.AI.Mode != "full-control" || !p.SecurityUpdates || p.AutomaticReboot || p.StateDir != "/var/lib/aegis/protection" || p.PollSeconds != 5 || p.AssessmentMinutes != 60 {
+	if p.AI.Mode != "full-control" || !p.SecurityUpdates || p.AutomaticReboot || p.StateDir != "/var/lib/fortmend/protection" || p.PollSeconds != 5 || p.AssessmentMinutes != 60 {
 		t.Fatalf("unexpected policy %+v", p)
 	}
 }
 func TestLinuxPolicyRejectsAmbiguousOrUnsafeInputs(t *testing.T) {
-	for _, body := range []string{`{}`, `{"schemaVersion":"aegis.linux/v1","securityUpdate":true}`, `{"schemaVersion":"aegis.linux/v1"} {}`, `{"schemaVersion":"aegis.linux/v1","stateDir":"/"}`, `{"schemaVersion":"aegis.linux/v1","pollSeconds":-1}`, `{"schemaVersion":"aegis.linux/v1","ai":{"enabled":true,"mode":"typo"}}`, `{"schemaVersion":"aegis.linux/v1","ai":{"binary":"codex"}}`, `{"schemaVersion":"aegis.linux/v1","webRoots":["/"]}`, `{"schemaVersion":"aegis.linux/v1","healthServices":["--all.service"]}`} {
+	for _, body := range []string{`{}`, `{"schemaVersion":"fortmend.linux/v1","securityUpdate":true}`, `{"schemaVersion":"fortmend.linux/v1"} {}`, `{"schemaVersion":"fortmend.linux/v1","stateDir":"/"}`, `{"schemaVersion":"fortmend.linux/v1","pollSeconds":-1}`, `{"schemaVersion":"fortmend.linux/v1","ai":{"enabled":true,"mode":"typo"}}`, `{"schemaVersion":"fortmend.linux/v1","ai":{"binary":"codex"}}`, `{"schemaVersion":"fortmend.linux/v1","webRoots":["/"]}`, `{"schemaVersion":"fortmend.linux/v1","healthServices":["--all.service"]}`} {
 		path := filepath.Join(t.TempDir(), "policy.json")
 		if err := os.WriteFile(path, []byte(body), 0600); err != nil {
 			t.Fatal(err)

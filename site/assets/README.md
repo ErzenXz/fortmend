@@ -7,6 +7,6 @@
 
 SHA-256 at import: `e4f4f41f48947fbb24f4eb49cab37cb077a04af656f746388a9052c1c7f1330e`.
 
-Aegis uses the published Geist typography, grid, theme, spacing, control, and
-report primitives while retaining its own name and logo; it does not represent
-itself as an official Vercel product.
+This reference stylesheet is retained from the original site. The Fortmend
+landing page uses its own dependency-free styles and logo; it does not load
+this file or represent itself as an official Vercel product.

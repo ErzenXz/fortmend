@@ -7,7 +7,7 @@ import (
 	"os/exec"
 	"strings"
 
-	"github.com/ErzenXz/aegis/internal/model"
+	"github.com/ErzenXz/fortmend/internal/model"
 )
 
 type CommandRunner interface {

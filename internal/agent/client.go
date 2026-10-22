@@ -19,9 +19,9 @@ import (
 	"strings"
 	"time"
 
-	"github.com/ErzenXz/aegis/internal/model"
-	"github.com/ErzenXz/aegis/internal/pki"
-	"github.com/ErzenXz/aegis/internal/secret"
+	"github.com/ErzenXz/fortmend/internal/model"
+	"github.com/ErzenXz/fortmend/internal/pki"
+	"github.com/ErzenXz/fortmend/internal/secret"
 )
 
 type Config struct {
@@ -171,9 +171,10 @@ func LoadConfig(path string) (Config, error) {
 	if err := json.Unmarshal(payload, &config); err != nil {
 		return Config{}, err
 	}
-	if config.SchemaVersion != model.SchemaVersion || config.HubURL == "" || config.DeviceID == "" {
+	if !model.SupportsSchema(config.SchemaVersion) || config.HubURL == "" || config.DeviceID == "" {
 		return Config{}, fmt.Errorf("invalid agent configuration")
 	}
+	config.SchemaVersion = model.SchemaVersion
 	return config, nil
 }
 

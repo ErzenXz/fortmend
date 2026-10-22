@@ -11,8 +11,8 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/ErzenXz/aegis/internal/model"
-	"github.com/ErzenXz/aegis/internal/sensors"
+	"github.com/ErzenXz/fortmend/internal/model"
+	"github.com/ErzenXz/fortmend/internal/sensors"
 )
 
 type Quarantine struct {

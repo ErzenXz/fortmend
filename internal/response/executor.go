@@ -6,7 +6,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/ErzenXz/aegis/internal/model"
+	"github.com/ErzenXz/fortmend/internal/model"
 )
 
 const (

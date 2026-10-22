@@ -13,8 +13,8 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/ErzenXz/aegis/internal/model"
-	"github.com/ErzenXz/aegis/internal/sensors"
+	"github.com/ErzenXz/fortmend/internal/model"
+	"github.com/ErzenXz/fortmend/internal/sensors"
 )
 
 var directRequestExec = regexp.MustCompile(`(?is)(?:^|[^a-z0-9_$>:])(?:eval|system|passthru|shell_exec|exec)\s*\(\s*\$_(?:GET|POST|REQUEST|COOKIE)\s*\[`)
@@ -247,12 +247,12 @@ func (m *Monitor) files(ctx context.Context, s *diskState, emit func(sensors.Obs
 					if confidence >= .99 {
 						attrs["quarantineEligible"] = "true"
 					}
-					if err := emit(sensors.Observation{Kind: "webshell.suspicious", Severity: model.SeverityHigh, Confidence: confidence, DetectorIDs: []string{"aegis:" + sig}, Attributes: attrs}); err != nil {
+					if err := emit(sensors.Observation{Kind: "webshell.suspicious", Severity: model.SeverityHigh, Confidence: confidence, DetectorIDs: []string{"fortmend:" + sig}, Attributes: attrs}); err != nil {
 						return err
 					}
 				}
 				if s.Baseline {
-					return emit(sensors.Observation{Kind: "file.modified", Severity: model.SeverityInfo, Confidence: 1, DetectorIDs: []string{"aegis:webroot-integrity"}, Attributes: attrs})
+					return emit(sensors.Observation{Kind: "file.modified", Severity: model.SeverityInfo, Confidence: 1, DetectorIDs: []string{"fortmend:webroot-integrity"}, Attributes: attrs})
 				}
 			} else {
 				suspicious := persistenceCommand.Match(content)
@@ -265,7 +265,7 @@ func (m *Monitor) files(ctx context.Context, s *diskState, emit func(sensors.Obs
 						severity = model.SeverityHigh
 						confidence = .95
 					}
-					return emit(sensors.Observation{Kind: "persistence.suspicious", Severity: severity, Confidence: confidence, DetectorIDs: []string{"aegis:persistence-integrity"}, Attributes: attrs})
+					return emit(sensors.Observation{Kind: "persistence.suspicious", Severity: severity, Confidence: confidence, DetectorIDs: []string{"fortmend:persistence-integrity"}, Attributes: attrs})
 				}
 			}
 			return nil
@@ -277,7 +277,7 @@ func (m *Monitor) files(ctx context.Context, s *diskState, emit func(sensors.Obs
 	}
 	for path, hash := range s.Files {
 		if _, ok := next[path]; !ok {
-			if err := emit(sensors.Observation{Kind: "file.modified", Severity: model.SeverityMedium, Confidence: 1, DetectorIDs: []string{"aegis:integrity-deletion"}, Attributes: map[string]string{"path": path, "previousSha256": hash, "change": "deleted"}}); err != nil {
+			if err := emit(sensors.Observation{Kind: "file.modified", Severity: model.SeverityMedium, Confidence: 1, DetectorIDs: []string{"fortmend:integrity-deletion"}, Attributes: map[string]string{"path": path, "previousSha256": hash, "change": "deleted"}}); err != nil {
 				return err
 			}
 		}

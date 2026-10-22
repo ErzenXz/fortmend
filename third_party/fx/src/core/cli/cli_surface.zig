@@ -311,7 +311,7 @@ const SessionRecoveryOptions = struct {
 const AcpOptions = struct {
     model: ?[]const u8 = null,
     log_file: ?[]const u8 = null,
-    aegis: bool = false,
+    fortmend: bool = false,
 };
 
 const WorkflowOptions = struct {
@@ -892,7 +892,7 @@ fn runNonInteractiveWithDeps(
         },
         .acp => |rest| {
             const acp_opts = parseAcpArgs(rest) catch {
-                try writeStderr(deps, "usage: fx acp [--model <id>] [--log-file <path>] [--aegis]\n");
+                try writeStderr(deps, "usage: fx acp [--model <id>] [--log-file <path>] [--fortmend]\n");
                 return .handled_failure;
             };
             try cfg.acp_runner.run(alloc, .{
@@ -928,7 +928,7 @@ fn runNonInteractiveWithDeps(
                 .model_override = acp_opts.model,
                 .log_file = acp_opts.log_file,
                 .allow_acp_mcp = true,
-                .allow_native_tools = !acp_opts.aegis,
+                .allow_native_tools = !acp_opts.fortmend,
             });
             return .handled_success;
         },
@@ -3061,9 +3061,9 @@ fn parseAcpArgs(args: []const [:0]const u8) !AcpOptions {
             if (opts.log_file != null or i + 1 >= args.len) return error.InvalidAcpArgs;
             i += 1;
             opts.log_file = args[i];
-        } else if (std.mem.eql(u8, args[i], "--aegis")) {
-            if (opts.aegis) return error.InvalidAcpArgs;
-            opts.aegis = true;
+        } else if (std.mem.eql(u8, args[i], "--fortmend")) {
+            if (opts.fortmend) return error.InvalidAcpArgs;
+            opts.fortmend = true;
         } else {
             return error.InvalidAcpArgs;
         }
@@ -3675,15 +3675,15 @@ test "parse acp args extracts known flags and rejects invalid arguments" {
     try std.testing.expectEqualStrings("openai/gpt-4o", opts.model.?);
     try std.testing.expectEqualStrings("/tmp/fx.log", opts.log_file.?);
 
-    const aegis_opts = try parseAcpArgs(&.{@constCast("--aegis")});
-    try std.testing.expect(aegis_opts.aegis);
+    const fortmend_opts = try parseAcpArgs(&.{@constCast("--fortmend")});
+    try std.testing.expect(fortmend_opts.fortmend);
 
     try std.testing.expectError(error.InvalidAcpArgs, parseAcpArgs(&.{@constCast("--unknown")}));
     try std.testing.expectError(error.InvalidAcpArgs, parseAcpArgs(&.{@constCast("--model")}));
     try std.testing.expectError(error.InvalidAcpArgs, parseAcpArgs(&.{@constCast("--log-file")}));
     try std.testing.expectError(
         error.InvalidAcpArgs,
-        parseAcpArgs(&.{ @constCast("--aegis"), @constCast("--aegis") }),
+        parseAcpArgs(&.{ @constCast("--fortmend"), @constCast("--fortmend") }),
     );
     try std.testing.expectError(
         error.InvalidAcpArgs,

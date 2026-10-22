@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="site/aegis-mark.svg" width="80" alt="Fortmend shield">
+  <img src="site/fortmend-mark.svg" width="80" alt="Fortmend shield">
 
 # Fortmend
 
@@ -7,7 +7,7 @@
 
 Find risks. Apply fixes. Check the results.
 
-[![CI](https://github.com/ErzenXz/aegis/actions/workflows/ci.yml/badge.svg)](https://github.com/ErzenXz/aegis/actions/workflows/ci.yml)
+[![CI](https://github.com/ErzenXz/fortmend/actions/workflows/ci.yml/badge.svg)](https://github.com/ErzenXz/fortmend/actions/workflows/ci.yml)
 [![License: AGPL-3.0](https://img.shields.io/badge/license-AGPL--3.0-315d52.svg)](LICENSE)
 [![Developer preview](https://img.shields.io/badge/status-developer%20preview-b9523b.svg)](docs/IMPLEMENTATION.md)
 
@@ -18,70 +18,48 @@ monitors attacks, applies security updates, and uses Codex with your ChatGPT
 account to investigate and repair problems.
 
 **Current target:** Ubuntu 24.04 and Debian 12 VMs running systemd.
-Fortmend is the new product name; the repository, command, and service still use
-`aegis`.
 
-## Quick start
+## Install
 
-Run these steps **inside the VM you want to protect**, using an account with sudo.
-
-### 1. Prepare the VM
-
-Install [Go 1.25 or newer](https://go.dev/doc/install) and the
-[official Codex CLI](https://learn.chatgpt.com/docs/cli).
-Use the standalone Linux Codex binary at `/usr/local/bin/codex`, owned by root
-and not writable by other users. See [Codex setup details](docs/LINUX.md#provision-codex-and-sign-in).
+Run this **inside the VM you want to protect**:
 
 ```sh
-sudo apt-get update
-sudo apt-get install -y git make ca-certificates unattended-upgrades
+curl -fsSL https://raw.githubusercontent.com/ErzenXz/fortmend/main/site/install.sh | sudo sh
 ```
 
-### 2. Install Fortmend
+Open the ChatGPT sign-in link shown in the terminal. Finish signing in, and
+Fortmend starts automatically and keeps running after you disconnect.
+No Go, Node.js, API key, or source build is needed.
+
+The installer checks release downloads, installs the official pinned Codex CLI
+and distro dependencies, and sets up `fortmend-protect.service`. It enables
+security updates, PHP quarantine, and **full-control AI**. Automatic reboots
+are off. Run it again to reinstall the pinned release; your policy, sign-in, and
+evidence are preserved.
+
+> Full-control AI can run commands and change system and application files as
+> root. Use a backed-up VM with recovery access. ChatGPT sign-in requires an
+> account with Codex access.
+
+Point Fortmend at your applications:
 
 ```sh
-git clone https://github.com/ErzenXz/aegis.git
-cd aegis
-make build
-sudo sh packaging/linux/install.sh \
-  --binary ./bin/aegis \
-  --policy packaging/linux/linux.example.json
+sudoedit /etc/fortmend/linux.json
+sudo systemctl restart fortmend-protect.service
 ```
 
-Edit the policy to match your applications:
-
-```sh
-sudoedit /etc/aegis/linux.json
-```
-
-Set `webRoots` to your application folders and `healthServices` to the services
-that must stay healthy. The example uses `/var/www/html` and `ssh.service`.
-Only list services installed and running on this VM.
-
-The example enables automatic security updates, PHP quarantine, and
-**full-control AI**. Automatic reboots are off.
-
-> Full-control AI can execute commands and change system and application files
-> as root. Start with a backed-up VM and review the policy before enabling it.
-
-### 3. Sign in and start
-
-```sh
-sudo aegis ai login
-sudo systemctl enable --now aegis-protect.service
-sudo systemctl status aegis-protect.service --no-pager
-```
-
-Open the device-login URL shown in your terminal and complete ChatGPT sign-in.
-Then start the service with the next command.
+Set `webRoots` to your application folders (default: `/var/www/html`).
+`healthServices` contains the active SSH/nginx/Apache units detected during
+installation; add other services that must stay healthy.
 
 Watch activity:
 
 ```sh
-sudo journalctl -u aegis-protect.service -f
+sudo journalctl -u fortmend-protect.service -f
 ```
 
-The service keeps running after you close the terminal.
+Prefer to review before starting, need an offline install, or already run Aegis?
+See the [setup and migration guide](docs/LINUX.md).
 
 ## What it does
 
@@ -97,9 +75,9 @@ The service keeps running after you close the terminal.
 It works locally without a hub. Fleet management and container packaging are
 future work.
 
-## Details
+## More
 
-- [Configuration, authentication, and recovery](docs/LINUX.md)
+- [Setup, configuration, and recovery](docs/LINUX.md)
 - [Tests and real VM verification](docs/TESTING.md)
 - [Implementation status and limitations](docs/IMPLEMENTATION.md)
 
@@ -111,6 +89,7 @@ repair does not establish that the entire VM is uncompromised.
 ```sh
 go test -race ./...
 go vet ./...
+python3 scripts/test-install.py
 ```
 
 ## License

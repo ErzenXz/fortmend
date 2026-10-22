@@ -11,13 +11,13 @@ import (
 	"testing"
 	"time"
 
-	"github.com/ErzenXz/aegis/internal/reasoner"
+	"github.com/ErzenXz/fortmend/internal/reasoner"
 )
 
 func safeTemp(t *testing.T) string {
 	t.Helper()
 	if os.Geteuid() == 0 && runtime.GOOS == "linux" {
-		path, err := os.MkdirTemp("/var/lib", "aegis-codex-test-")
+		path, err := os.MkdirTemp("/var/lib", "fortmend-codex-test-")
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -215,9 +215,9 @@ func TestRootAuthRejectsWritableStateAndExecutable(t *testing.T) {
 }
 
 // This smoke test exercises the installed official protocol without signing in
-// or sending inference. It uses an empty, temporary Aegis-owned profile.
+// or sending inference. It uses an empty, temporary Fortmend-owned profile.
 func TestOfficialAppServerAccountSmoke(t *testing.T) {
-	if os.Getenv("AEGIS_CODEX_SMOKE") != "1" {
+	if os.Getenv("FORTMEND_CODEX_SMOKE") != "1" {
 		t.Skip("opt-in installed Codex smoke")
 	}
 	binary, err := exec.LookPath("codex")
@@ -253,7 +253,7 @@ func TestOfficialAppServerAccountSmoke(t *testing.T) {
 	if json.Unmarshal(effective, &cfg) != nil || cfg.Config == nil {
 		t.Fatal("effective configuration protocol failed")
 	}
-	thread, err := conn.call(11, "thread/start", map[string]any{"cwd": filepath.Join(c.Config.Home, "investigation"), "sandbox": "read-only", "approvalPolicy": "never", "ephemeral": true, "baseInstructions": "Aegis protocol smoke only; no turn will start."})
+	thread, err := conn.call(11, "thread/start", map[string]any{"cwd": filepath.Join(c.Config.Home, "investigation"), "sandbox": "read-only", "approvalPolicy": "never", "ephemeral": true, "baseInstructions": "Fortmend protocol smoke only; no turn will start."})
 	if err != nil {
 		t.Fatal(err)
 	}

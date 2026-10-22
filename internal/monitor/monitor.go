@@ -20,8 +20,8 @@ import (
 	"sync"
 	"time"
 
-	"github.com/ErzenXz/aegis/internal/model"
-	"github.com/ErzenXz/aegis/internal/sensors"
+	"github.com/ErzenXz/fortmend/internal/model"
+	"github.com/ErzenXz/fortmend/internal/sensors"
 )
 
 type Config struct {
@@ -53,7 +53,7 @@ func New(config Config) *Monitor {
 	}
 	return &Monitor{config: config}
 }
-func (*Monitor) Name() string { return "aegis.linux-monitor" }
+func (*Monitor) Name() string { return "fortmend.linux-monitor" }
 
 // Run polls at most 1,000 journal records and a bounded set of scoped files.
 // Errors are coverage failures, never evidence that the host is clean.
@@ -173,7 +173,7 @@ func (m *Monitor) journal(ctx context.Context, s *diskState, emit func(sensors.O
 	output, err := m.config.Runner.Run(ctx, "journalctl", args...)
 	if err != nil && s.Cursor != "" && ctx.Err() == nil && invalidJournalCursor(err) {
 		previous := sha256.Sum256([]byte(s.Cursor))
-		if emitErr := emit(sensors.Observation{Kind: "sensor.coverage_gap", Severity: model.SeverityHigh, Confidence: 1, DetectorIDs: []string{"aegis:journal-cursor-recovery"}, Attributes: map[string]string{"reason": "journal_cursor_invalid_or_expired", "previousCursorSha256": hex.EncodeToString(previous[:]), "replayWindowSeconds": "300", "replayRecordLimit": "1000", "status": "degraded", "coverage": "lost journal history cannot be reconstructed; replay may duplicate previous observations"}}); emitErr != nil {
+		if emitErr := emit(sensors.Observation{Kind: "sensor.coverage_gap", Severity: model.SeverityHigh, Confidence: 1, DetectorIDs: []string{"fortmend:journal-cursor-recovery"}, Attributes: map[string]string{"reason": "journal_cursor_invalid_or_expired", "previousCursorSha256": hex.EncodeToString(previous[:]), "replayWindowSeconds": "300", "replayRecordLimit": "1000", "status": "degraded", "coverage": "lost journal history cannot be reconstructed; replay may duplicate previous observations"}}); emitErr != nil {
 			return emitErr
 		}
 		// Commit the disclosed reset before replaying. A failed gap emission
@@ -297,5 +297,5 @@ func invalidJournalCursor(err error) bool {
 	return false
 }
 func authObservation(at time.Time, ip, reason string, severity model.Severity) sensors.Observation {
-	return sensors.Observation{ObservedAt: at, Kind: "authentication.anomaly", Severity: severity, Confidence: .95, DetectorIDs: []string{"aegis:" + reason}, Attributes: map[string]string{"sourceIp": ip, "reason": reason, "windowSeconds": "300", "threshold": "10"}}
+	return sensors.Observation{ObservedAt: at, Kind: "authentication.anomaly", Severity: severity, Confidence: .95, DetectorIDs: []string{"fortmend:" + reason}, Attributes: map[string]string{"sourceIp": ip, "reason": reason, "windowSeconds": "300", "threshold": "10"}}
 }

@@ -6,7 +6,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/ErzenXz/aegis/internal/update"
+	"github.com/ErzenXz/fortmend/internal/update"
 )
 
 func TestSignedManifestRejectsTampering(t *testing.T) {
@@ -15,10 +15,10 @@ func TestSignedManifestRejectsTampering(t *testing.T) {
 		t.Fatal(err)
 	}
 	manifest := update.Manifest{
-		SchemaVersion: "aegis.update/v1alpha1",
+		SchemaVersion: "fortmend.update/v1alpha1",
 		Version:       "0.1.0",
 		PublishedAt:   time.Date(2026, time.August, 24, 10, 0, 0, 0, time.UTC),
-		Artifacts:     []update.Artifact{{OS: "linux", Arch: "amd64", URL: "https://example.invalid/aegis", SHA256: "abc", Size: 42}},
+		Artifacts:     []update.Artifact{{OS: "linux", Arch: "amd64", URL: "https://example.invalid/fortmend", SHA256: "abc", Size: 42}},
 	}
 	signed, err := update.Sign(manifest, privateKey)
 	if err != nil {

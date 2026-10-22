@@ -6,8 +6,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/ErzenXz/aegis/internal/model"
-	"github.com/ErzenXz/aegis/internal/reasoner"
+	"github.com/ErzenXz/fortmend/internal/model"
+	"github.com/ErzenXz/fortmend/internal/reasoner"
 )
 
 type recordingClient struct{ request reasoner.TurnRequest }

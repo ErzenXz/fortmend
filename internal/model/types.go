@@ -2,7 +2,13 @@ package model
 
 import "time"
 
-const SchemaVersion = "aegis.security/v1alpha1"
+const SchemaVersion = "fortmend.security/v1alpha1"
+
+// SupportsSchema keeps previously persisted and enrolled preview data readable.
+// Newly produced records always use SchemaVersion.
+func SupportsSchema(version string) bool {
+	return version == SchemaVersion || version == "aegis.security/v1alpha1"
+}
 
 type Severity string
 
@@ -49,7 +55,7 @@ const (
 	ActionBlockIndicator     ActionKind = "network.block_indicator"
 	ActionIsolateHost        ActionKind = "network.isolate_host"
 	ActionApplySecurityFix   ActionKind = "system.apply_security_update"
-	ActionRotateCredential   ActionKind = "aegis.rotate_credential"
+	ActionRotateCredential   ActionKind = "fortmend.rotate_credential"
 	ActionDisableAccount     ActionKind = "account.disable_incident_created"
 )
 

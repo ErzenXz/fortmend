@@ -6,12 +6,12 @@ import (
 	"testing"
 	"time"
 
-	"github.com/ErzenXz/aegis/internal/model"
-	"github.com/ErzenXz/aegis/internal/store"
+	"github.com/ErzenXz/fortmend/internal/model"
+	"github.com/ErzenXz/fortmend/internal/store"
 )
 
 func TestSQLiteStoreIngestsEventFindingAndAuditChain(t *testing.T) {
-	db, err := store.Open(filepath.Join(t.TempDir(), "aegis.db"), store.Retention{
+	db, err := store.Open(filepath.Join(t.TempDir(), "fortmend.db"), store.Retention{
 		RawEvents: 30 * 24 * time.Hour,
 		Findings:  180 * 24 * time.Hour,
 	})
@@ -60,7 +60,7 @@ func TestSQLiteStoreIngestsEventFindingAndAuditChain(t *testing.T) {
 }
 
 func TestDuplicateEventIngestionIsIdempotent(t *testing.T) {
-	db, err := store.Open(filepath.Join(t.TempDir(), "aegis.db"), store.Retention{RawEvents: 30 * 24 * time.Hour, Findings: 180 * 24 * time.Hour})
+	db, err := store.Open(filepath.Join(t.TempDir(), "fortmend.db"), store.Retention{RawEvents: 30 * 24 * time.Hour, Findings: 180 * 24 * time.Hour})
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -81,7 +81,7 @@ func TestDuplicateEventIngestionIsIdempotent(t *testing.T) {
 
 func TestPruneAppliesConfiguredRetention(t *testing.T) {
 	now := time.Now().UTC()
-	db, err := store.Open(filepath.Join(t.TempDir(), "aegis.db"), store.Retention{RawEvents: time.Hour, Findings: time.Hour, Audit: 24 * time.Hour})
+	db, err := store.Open(filepath.Join(t.TempDir(), "fortmend.db"), store.Retention{RawEvents: time.Hour, Findings: time.Hour, Audit: 24 * time.Hour})
 	if err != nil {
 		t.Fatal(err)
 	}

@@ -1,8 +1,8 @@
 [Unit]
-Description=Aegis Ubuntu/Debian security updates, attack monitoring and autonomous VM protection
+Description=Fortmend Ubuntu/Debian security updates, attack monitoring and autonomous VM protection
 Wants=network-online.target
 After=network-online.target
-ConditionPathExists=/etc/aegis/linux.json
+ConditionPathExists=/etc/fortmend/linux.json
 StartLimitIntervalSec=300
 StartLimitBurst=5
 
@@ -15,7 +15,7 @@ Environment=PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
 Environment=HOME=/root
 Environment=LANG=C.UTF-8
 UMask=0077
-ExecStart=/usr/local/bin/aegis protect --config /etc/aegis/linux.json
+ExecStart=/usr/local/bin/fortmend protect --config /etc/fortmend/linux.json
 Restart=on-failure
 RestartSec=10s
 KillMode=control-group

@@ -13,15 +13,15 @@ import (
 	"testing"
 	"time"
 
-	"github.com/ErzenXz/aegis/internal/detection"
-	"github.com/ErzenXz/aegis/internal/hub"
-	"github.com/ErzenXz/aegis/internal/model"
-	"github.com/ErzenXz/aegis/internal/pki"
-	"github.com/ErzenXz/aegis/internal/store"
+	"github.com/ErzenXz/fortmend/internal/detection"
+	"github.com/ErzenXz/fortmend/internal/hub"
+	"github.com/ErzenXz/fortmend/internal/model"
+	"github.com/ErzenXz/fortmend/internal/pki"
+	"github.com/ErzenXz/fortmend/internal/store"
 )
 
 func TestEventIngestionProducesFindingVisibleThroughHTTP(t *testing.T) {
-	db, err := store.Open(filepath.Join(t.TempDir(), "aegis.db"), store.Retention{RawEvents: 30 * 24 * time.Hour, Findings: 180 * 24 * time.Hour})
+	db, err := store.Open(filepath.Join(t.TempDir(), "fortmend.db"), store.Retention{RawEvents: 30 * 24 * time.Hour, Findings: 180 * 24 * time.Hour})
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -67,12 +67,12 @@ func TestEventIngestionProducesFindingVisibleThroughHTTP(t *testing.T) {
 }
 
 func TestEnrollmentBindsEventIngestionToDeviceCertificate(t *testing.T) {
-	db, err := store.Open(filepath.Join(t.TempDir(), "aegis.db"), store.Retention{RawEvents: 30 * 24 * time.Hour, Findings: 180 * 24 * time.Hour})
+	db, err := store.Open(filepath.Join(t.TempDir(), "fortmend.db"), store.Retention{RawEvents: 30 * 24 * time.Hour, Findings: 180 * 24 * time.Hour})
 	if err != nil {
 		t.Fatal(err)
 	}
 	defer db.Close()
-	authority, err := pki.NewAuthority("Aegis Test CA", time.Now().UTC())
+	authority, err := pki.NewAuthority("Fortmend Test CA", time.Now().UTC())
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -123,7 +123,7 @@ func TestEnrollmentBindsEventIngestionToDeviceCertificate(t *testing.T) {
 }
 
 func TestHubServesIncidentTimeline(t *testing.T) {
-	db, err := store.Open(filepath.Join(t.TempDir(), "aegis.db"), store.Retention{RawEvents: 30 * 24 * time.Hour, Findings: 180 * 24 * time.Hour})
+	db, err := store.Open(filepath.Join(t.TempDir(), "fortmend.db"), store.Retention{RawEvents: 30 * 24 * time.Hour, Findings: 180 * 24 * time.Hour})
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -131,7 +131,7 @@ func TestHubServesIncidentTimeline(t *testing.T) {
 	request := httptest.NewRequest(http.MethodGet, "/", nil)
 	response := httptest.NewRecorder()
 	hub.New(db, detection.New(detection.DefaultPolicy())).ServeHTTP(response, request)
-	if response.Code != http.StatusOK || !strings.Contains(response.Body.String(), "Aegis Incident Timeline") {
+	if response.Code != http.StatusOK || !strings.Contains(response.Body.String(), "Fortmend Incident Timeline") {
 		t.Fatalf("status=%d body=%s", response.Code, response.Body.String())
 	}
 }

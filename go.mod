@@ -1,4 +1,4 @@
-module github.com/ErzenXz/aegis
+module github.com/ErzenXz/fortmend
 
 go 1.25.0
 

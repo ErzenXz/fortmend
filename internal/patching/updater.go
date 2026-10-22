@@ -15,8 +15,8 @@ import (
 	"sync"
 	"time"
 
-	"github.com/ErzenXz/aegis/internal/model"
-	"github.com/ErzenXz/aegis/internal/sensors"
+	"github.com/ErzenXz/fortmend/internal/model"
+	"github.com/ErzenXz/fortmend/internal/sensors"
 )
 
 type Config struct {
@@ -317,7 +317,7 @@ func (u *Updater) Run(ctx context.Context, emit func(sensors.Observation) error)
 	}
 	defer unlock()
 	event := func(kind string, severity model.Severity, attributes map[string]string) error {
-		return emit(sensors.Observation{Kind: kind, Severity: severity, Confidence: 1, DetectorIDs: []string{"aegis:security-update"}, Attributes: attributes})
+		return emit(sensors.Observation{Kind: kind, Severity: severity, Confidence: 1, DetectorIDs: []string{"fortmend:security-update"}, Attributes: attributes})
 	}
 	if data, err := os.ReadFile(u.statePath()); err == nil {
 		var r receipt
@@ -393,7 +393,7 @@ func (u *Updater) Run(ctx context.Context, emit func(sensors.Observation) error)
 			return err
 		}
 		if u.Config.Reboot {
-			_, err = u.command(ctx, "", "/sbin/shutdown", "-r", "+1", "Aegis security updates: verified services; reboot required")
+			_, err = u.command(ctx, "", "/sbin/shutdown", "-r", "+1", "Fortmend security updates: verified services; reboot required")
 			return err
 		}
 	} else if !os.IsNotExist(err) {

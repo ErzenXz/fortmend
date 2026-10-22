@@ -7,8 +7,8 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/ErzenXz/aegis/internal/model"
-	"github.com/ErzenXz/aegis/internal/store"
+	"github.com/ErzenXz/fortmend/internal/model"
+	"github.com/ErzenXz/fortmend/internal/store"
 )
 
 type Server struct {
@@ -28,7 +28,7 @@ func New(store *store.Store, token string) *Server {
 		return map[string]any{"type": "object", "properties": properties, "additionalProperties": false}
 	}
 	return &Server{store: store, token: token, tools: []tool{
-		{Name: "get_case", Description: "Read one Aegis incident case or finding by ID.", InputSchema: object(map[string]any{"id": map[string]any{"type": "string"}})},
+		{Name: "get_case", Description: "Read one Fortmend incident case or finding by ID.", InputSchema: object(map[string]any{"id": map[string]any{"type": "string"}})},
 		{Name: "search_events", Description: "Search bounded normalized endpoint events by device or kind.", InputSchema: object(map[string]any{"deviceId": map[string]any{"type": "string"}, "kind": map[string]any{"type": "string"}, "limit": map[string]any{"type": "integer", "minimum": 1, "maximum": 500}})},
 		{Name: "collect_evidence", Description: "Collect bounded existing evidence for a device without executing host commands.", InputSchema: object(map[string]any{"deviceId": map[string]any{"type": "string"}, "limit": map[string]any{"type": "integer", "minimum": 1, "maximum": 200}})},
 		{Name: "get_host_state", Description: "Read the latest normalized posture and capability events for a device.", InputSchema: object(map[string]any{"deviceId": map[string]any{"type": "string"}})},
@@ -74,7 +74,7 @@ func (s *Server) ServeHTTP(writer http.ResponseWriter, request *http.Request) {
 	}
 	switch message.Method {
 	case "initialize":
-		s.rpcResult(writer, message.ID, map[string]any{"protocolVersion": "2025-06-18", "capabilities": map[string]any{"tools": map[string]any{}}, "serverInfo": map[string]string{"name": "aegis-security", "version": "0.1.0"}})
+		s.rpcResult(writer, message.ID, map[string]any{"protocolVersion": "2025-06-18", "capabilities": map[string]any{"tools": map[string]any{}}, "serverInfo": map[string]string{"name": "fortmend-security", "version": "0.1.0"}})
 	case "notifications/initialized":
 		writer.WriteHeader(http.StatusAccepted)
 	case "tools/list":

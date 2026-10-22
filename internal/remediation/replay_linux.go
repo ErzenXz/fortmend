@@ -14,8 +14,8 @@ import (
 	"path/filepath"
 	"time"
 
-	"github.com/ErzenXz/aegis/internal/model"
-	"github.com/ErzenXz/aegis/internal/sensors"
+	"github.com/ErzenXz/fortmend/internal/model"
+	"github.com/ErzenXz/fortmend/internal/sensors"
 	"golang.org/x/sys/unix"
 )
 
@@ -276,5 +276,5 @@ func (q *Quarantine) replayAction(ctx context.Context, fd int, key string, bytes
 }
 
 func replayedFailure(r receipt, path, status string) sensors.Observation {
-	return sensors.Observation{Kind: "remediation.quarantine_failed", Severity: model.SeverityCritical, Confidence: 1, DetectorIDs: []string{"aegis:quarantine-receipt-recovery"}, Attributes: map[string]string{"path": r.Path, "sha256": r.SHA256, "signature": r.Signature, "occurrenceId": r.OccurrenceID, "quarantinePath": path, "status": status, "hostClean": "false"}}
+	return sensors.Observation{Kind: "remediation.quarantine_failed", Severity: model.SeverityCritical, Confidence: 1, DetectorIDs: []string{"fortmend:quarantine-receipt-recovery"}, Attributes: map[string]string{"path": r.Path, "sha256": r.SHA256, "signature": r.Signature, "occurrenceId": r.OccurrenceID, "quarantinePath": path, "status": status, "hostClean": "false"}}
 }

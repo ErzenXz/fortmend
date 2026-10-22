@@ -3,151 +3,233 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Aegis is self-hosted endpoint defense where deterministic policy holds authority and AI remains a constrained investigator.">
-  <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
-  <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
-  <title>Aegis — policy holds the authority</title>
-  <link rel="icon" href="aegis-mark.svg" type="image/svg+xml">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400..600&amp;family=Geist+Mono:wght@400..600&amp;display=swap" rel="stylesheet" referrerpolicy="no-referrer">
-  <link href="assets/vercel-brand.css" rel="stylesheet">
+  <meta name="description" content="Fortmend is an autonomous security engineer for your Ubuntu and Debian VMs. Monitor attacks, patch vulnerabilities, investigate and verify repairs.">
+  <meta name="theme-color" content="#08090b">
+  <meta property="og:title" content="Fortmend — Your server. Under watch.">
+  <meta property="og:description" content="An autonomous security engineer that lives inside your Linux VM. Observe. Repair. Verify.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://erzenxz.github.io/fortmend/">
+  <title>Fortmend — Your server. Under watch.</title>
+  <link rel="canonical" href="https://erzenxz.github.io/fortmend/">
+  <link rel="icon" href="fortmend-mark.svg" type="image/svg+xml">
   <style>
-    .vbg-custom-brand { display: inline-flex; align-items: center; gap: var(--vbg-space-3); color: inherit; text-decoration: none; }
-    .vbg-custom-brand img { width: 32px; height: 36px; }
-    .vbg-custom-brand-name { font-weight: var(--vbg-weight-semibold); letter-spacing: -.02em; }
-    .vbg-custom-meta-link { color: var(--vbg-text-secondary); text-decoration: none; }
-    .vbg-custom-meta-link:hover { color: var(--vbg-text-primary); }
-    .vbg-custom-install { display: grid; gap: var(--vbg-space-3); margin-top: var(--vbg-space-8); }
-    .vbg-custom-command { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: var(--vbg-space-4); padding: var(--vbg-space-4); border: 1px solid var(--vbg-border-default); border-radius: var(--vbg-radius); background: var(--vbg-surface-secondary); }
-    .vbg-custom-command code { min-width: 0; overflow-x: auto; color: var(--vbg-text-primary); font: var(--vbg-weight-regular) var(--vbg-type-compact)/var(--vbg-leading-compact) "Geist Mono", monospace; white-space: nowrap; }
-    .vbg-custom-copy { min-height: 36px; padding: 0 var(--vbg-space-4); border: 1px solid var(--vbg-border-strong); border-radius: var(--vbg-radius-small); background: var(--vbg-text-primary); color: var(--vbg-surface-primary); font: var(--vbg-weight-medium) var(--vbg-type-label)/1 "Geist", sans-serif; cursor: pointer; }
-    .vbg-custom-copy:focus-visible { outline: 2px solid var(--vbg-focus); outline-offset: 2px; }
-    .vbg-custom-authority { display: grid; align-content: center; min-width: 0; padding: var(--vbg-space-8); border: 1px solid var(--vbg-border-default); }
-    .vbg-custom-flow { display: grid; gap: 0; margin: var(--vbg-space-6) 0 0; padding: 0; list-style: none; counter-reset: authority; }
-    .vbg-custom-flow li { display: grid; grid-template-columns: 34px minmax(0, 1fr); gap: var(--vbg-space-4); padding: var(--vbg-space-4) 0; border-top: 1px solid var(--vbg-border-subtle); counter-increment: authority; }
-    .vbg-custom-flow li::before { content: counter(authority, decimal-leading-zero); color: var(--vbg-text-secondary); font: var(--vbg-weight-regular) var(--vbg-type-metadata)/var(--vbg-leading-caption) "Geist Mono", monospace; }
-    .vbg-custom-flow strong { display: block; margin-bottom: var(--vbg-space-1); font-weight: var(--vbg-weight-medium); }
-    .vbg-custom-flow span { color: var(--vbg-text-secondary); }
-    .vbg-custom-ledger { width: 100%; border-collapse: collapse; }
-    .vbg-custom-ledger caption { margin-bottom: var(--vbg-space-4); color: var(--vbg-text-secondary); text-align: left; }
-    .vbg-custom-ledger th, .vbg-custom-ledger td { padding: var(--vbg-space-4) 0; border-bottom: 1px solid var(--vbg-border-subtle); text-align: left; vertical-align: baseline; }
-    .vbg-custom-ledger th { width: 31%; padding-right: var(--vbg-space-6); font-weight: var(--vbg-weight-medium); }
-    .vbg-custom-ledger td { color: var(--vbg-text-secondary); }
-    .vbg-custom-state { display: inline-flex; align-items: baseline; gap: var(--vbg-space-2); color: var(--vbg-text-primary); }
-    .vbg-custom-state::before { content: ""; width: 7px; height: 7px; border: 1px solid currentColor; border-radius: 50%; }
-    .vbg-custom-limit { max-width: 68ch; }
-    .vbg-custom-footer-brand { display: inline-flex; align-items: center; gap: var(--vbg-space-2); }
-    .vbg-custom-footer-brand img { width: 21px; height: 24px; }
-    @media (max-width: 720px) {
-      .vbg-custom-command { grid-template-columns: 1fr; }
-      .vbg-custom-copy { justify-self: start; }
-      .vbg-custom-authority { padding: var(--vbg-space-6); }
-      .vbg-custom-ledger th, .vbg-custom-ledger td { display: block; width: auto; }
-      .vbg-custom-ledger th { padding-bottom: var(--vbg-space-1); border-bottom: 0; }
-      .vbg-custom-ledger td { padding-top: 0; }
-    }
+    :root { color-scheme:dark; --bg:#08090b; --ink:#f0f0f1; --muted:#97999f; --line:rgba(255,255,255,.11); --mono:ui-monospace,"SFMono-Regular",Consolas,monospace; }
+    * { box-sizing:border-box; }
+    html { scroll-behavior:smooth; scroll-padding-top:32px; }
+    body { margin:0; background:var(--bg); color:var(--ink); font-family:Inter,"Helvetica Neue",Arial,sans-serif; -webkit-font-smoothing:antialiased; }
+    ::selection { background:#dadce1; color:#08090b; }
+    a { color:inherit; text-decoration:none; }
+    button { font:inherit; }
+    a,button { -webkit-tap-highlight-color:transparent; }
+    :focus-visible { outline:2px solid #e4e4e7; outline-offset:5px; }
+    .skip { position:fixed; top:12px; left:12px; padding:12px; background:#fff; color:#000; z-index:20; transform:translateY(-180%); }
+    .skip:focus { transform:none; }
+    .shell { width:min(1160px,calc(100% - 96px)); margin:auto; }
+    header { height:100px; display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid var(--line); }
+    .brand { display:inline-flex; align-items:center; gap:11px; font-size:21px; font-weight:600; letter-spacing:-.8px; }
+    .brand img { width:29px; height:33px; }
+    nav { display:flex; align-items:center; gap:30px; color:var(--muted); font-size:13px; }
+    nav a { transition:color .2s; }
+    nav a:hover { color:#fff; }
+    .nav-github { display:flex; align-items:center; gap:9px; color:#e4e4e7; }
+    .arrow { display:inline-block; transition:transform .2s; }
+    a:hover .arrow { transform:translate(2px,-2px); }
+    .hero { position:relative; display:grid; grid-template-columns:1.15fr 1fr; align-items:center; min-height:610px; padding:88px 0 76px; }
+    .hero-copy { position:relative; z-index:2; }
+    .eyebrow { display:flex; align-items:center; gap:9px; margin:0 0 28px; color:#b5b6bb; font:10px/1.6 var(--mono); letter-spacing:1.7px; text-transform:uppercase; }
+    .status-dot { width:5px; height:5px; background:#d9dadf; border-radius:50%; box-shadow:0 0 12px #ffffff66; }
+    h1 { margin:0; font-size:clamp(54px,6.8vw,85px); font-weight:500; line-height:1.04; letter-spacing:-5px; }
+    h1 span { color:#777b83; }
+    .hero-description { max-width:420px; margin:27px 0 29px; color:#a6a8ae; font-size:16px; line-height:1.75; }
+    .hero-actions { display:flex; align-items:center; gap:25px; font-size:13px; }
+    .button { display:inline-flex; align-items:center; justify-content:center; gap:20px; min-height:45px; padding:0 20px; border:1px solid #f1f1f3; border-radius:5px; background:#eeeef0; color:#141518; font-weight:600; transition:background .2s,box-shadow .2s; }
+    .button:hover { background:#fff; box-shadow:0 0 25px #ffffff16; }
+    .text-link { color:#b7b9bf; }
+    .text-link:hover { color:#fff; }
+    .visual { position:relative; min-width:0; height:410px; isolation:isolate; }
+    #field { position:absolute; inset:-70px -35px; width:calc(100% + 70px); height:calc(100% + 140px); opacity:.9; pointer-events:none; }
+    .orbital { position:absolute; width:240px; height:240px; top:82px; left:calc(50% - 120px); transform:rotate(-30deg) skew(10deg,10deg); border:1px solid #ffffff1c; border-radius:36px; box-shadow:0 0 90px #ffffff04,inset 0 0 60px #ffffff03; }
+    .orbital::before,.orbital::after { content:""; position:absolute; inset:24px; border:1px solid #ffffff20; border-radius:25px; }
+    .orbital::after { inset:-24px; border-color:#ffffff0b; border-radius:47px; }
+    .emblem { position:absolute; display:grid; place-items:center; width:126px; height:144px; left:calc(50% - 63px); top:132px; filter:drop-shadow(0 0 35px #ffffff18); }
+    .emblem img { width:87px; height:99px; opacity:.94; }
+    .visual-label { position:absolute; font:9px/1.6 var(--mono); color:#666b73; letter-spacing:1.3px; text-transform:uppercase; }
+    .label-top { left:21%; top:22px; }
+    .label-bottom { right:8%; bottom:20px; display:flex; align-items:center; gap:8px; }
+    .cross { position:absolute; width:9px; height:9px; background:linear-gradient(#737780,#737780) center/1px 9px no-repeat,linear-gradient(#737780,#737780) center/9px 1px no-repeat; opacity:.5; }
+    .cross.one { top:60px; right:15%; }.cross.two { bottom:58px; left:9%; }
+    .platforms { display:flex; justify-content:space-between; align-items:center; gap:20px; padding:22px 0; border-top:1px solid var(--line); border-bottom:1px solid var(--line); color:#777b83; font:10px/1.6 var(--mono); letter-spacing:.6px; }
+    .platform-list { display:flex; align-items:center; gap:25px; color:#b3b6bd; }
+    .platform-list span { white-space:nowrap; }
+    .platforms .preview { display:flex; gap:8px; align-items:center; }
+    .preview::before { content:""; height:5px; width:5px; border:1px solid #888c94; border-radius:50%; }
+    .section { padding:96px 0; }
+    .section-heading { display:flex; justify-content:space-between; align-items:end; gap:28px; margin-bottom:38px; }
+    .kicker { margin:0 0 15px; color:#777d87; font:10px/1.6 var(--mono); letter-spacing:1.5px; text-transform:uppercase; }
+    h2 { margin:0; font-size:36px; line-height:1.17; letter-spacing:-1.5px; font-weight:500; }
+    .section-intro { max-width:310px; margin:0; font-size:13px; line-height:1.8; color:var(--muted); }
+    .cards { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:14px; }
+    .card { position:relative; overflow:hidden; padding:30px 26px 29px; border:1px solid var(--line); border-radius:8px; background:linear-gradient(145deg,#11121690,#0c0d1060); transition:transform .25s,border-color .25s; }
+    .card::before { content:""; position:absolute; inset:0; pointer-events:none; background:radial-gradient(280px circle at var(--x,50%) var(--y,0%),#ffffff0b,transparent 70%); opacity:0; transition:opacity .3s; }
+    .card:hover { border-color:#ffffff30; transform:translateY(-4px); }
+    .card:hover::before { opacity:1; }
+    .card-top { display:flex; justify-content:space-between; align-items:center; margin-bottom:39px; }
+    .card-number { color:#858c97; font:10px var(--mono); letter-spacing:1px; }
+    .card-icon { width:24px; height:24px; color:#c9cbd1; }
+    h3 { margin:0 0 13px; font-size:18px; letter-spacing:-.4px; font-weight:500; }
+    .card p { color:var(--muted); font-size:13px; line-height:1.85; margin:0; }
+    .card-tags { margin-top:27px; padding-top:19px; border-top:1px solid #ffffff09; color:#858c97; font:9px/1.7 var(--mono); letter-spacing:.3px; }
+    .install-section { position:relative; padding:16px 0 96px; }
+    .install-panel { position:relative; padding:45px; border:1px solid #ffffff20; border-radius:10px; background:radial-gradient(ellipse at 50% 0,#ffffff04,transparent 65%),#0b0c0f; overflow:hidden; }
+    .install-header { display:flex; align-items:start; justify-content:space-between; gap:25px; margin-bottom:31px; }
+    .install-panel h2 { font-size:30px; letter-spacing:-1px; }
+    .install-header p { color:var(--muted); font-size:13px; line-height:1.7; margin:13px 0 0; }
+    .linux-badge { padding:7px 10px; border:1px solid #ffffff15; border-radius:4px; font:9px var(--mono); color:#8d929c; white-space:nowrap; }
+    .command { display:flex; align-items:center; gap:18px; min-width:0; border:1px solid #ffffff16; border-radius:6px; background:#060709; padding:17px 15px 17px 19px; }
+    .prompt { font:13px var(--mono); color:#4f5660; user-select:none; }
+    .command code { flex:1; min-width:0; overflow-x:auto; padding:4px 0; font:11px/1.8 var(--mono); white-space:nowrap; color:#cbd0d8; scrollbar-width:thin; }
+    .copy { display:flex; align-items:center; gap:7px; min-height:34px; padding:0 11px; border:1px solid #ffffff20; border-radius:4px; background:#17191e; color:#e0e1e5; font-size:11px; cursor:pointer; transition:background .2s; flex-shrink:0; }
+    .copy:hover { background:#252830; }
+    .copy svg { width:12px; height:12px; }
+    .install-note { display:flex; gap:22px; align-items:baseline; justify-content:space-between; margin-top:17px; font-size:11px; line-height:1.8; color:#8d95a1; }
+    .install-note p { margin:0; max-width:650px; }.install-note a { white-space:nowrap; color:#b7bbc3; border-bottom:1px solid #ffffff25; }
+    .principle { display:grid; grid-template-columns:1fr 1fr; gap:75px; padding:62px 0 72px; border-top:1px solid var(--line); }
+    .principle h2 { max-width:400px; font-size:29px; line-height:1.3; }
+    .principle p { color:#858b95; font-size:13px; line-height:1.9; margin:0 0 15px; }
+    .principle a { color:#c6c9d0; font-size:12px; }
+    footer { display:flex; align-items:center; justify-content:space-between; gap:25px; padding:27px 0 35px; border-top:1px solid var(--line); }
+    footer .brand { font-size:16px; color:#b6bac2; gap:8px; }footer .brand img { width:21px; height:24px; opacity:.7; }
+    .footer-meta { color:#858c97; font:9px/1.7 var(--mono); }
+    .footer-links { display:flex; gap:22px; font-size:11px; color:#8c939e; }
+    .sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
+    @media(min-width:1450px) { .hero { min-height:660px; } }
+    @media(max-width:900px) { .shell { width:calc(100% - 56px); } h1 { font-size:65px; letter-spacing:-3.7px; }.hero { grid-template-columns:1.2fr 1fr; min-height:560px; }.visual { height:350px; }.orbital { width:190px; height:190px; top:80px; left:calc(50% - 95px); }.emblem { top:103px; }.hero-description { font-size:14px; }.cards { gap:10px; }.card { padding:25px 20px; }.install-panel { padding:32px; }.command code { font-size:10px; }.principle { gap:35px; } }
+    @media(max-width:650px) { .shell { width:calc(100% - 40px); } header { height:79px; }.brand { font-size:19px; }nav { gap:20px; }nav .docs { display:none; }.hero { display:flex; flex-direction:column; align-items:stretch; padding:62px 0 20px; min-height:auto; }.eyebrow { font-size:9px; letter-spacing:1.1px; margin-bottom:24px; }h1 { font-size:clamp(48px,15.5vw,64px); letter-spacing:-3.3px; }.hero-description { max-width:360px; font-size:15px; margin-top:24px; }.visual { height:300px; margin-top:25px; }.orbital { top:58px; width:180px; height:180px; left:calc(50% - 90px); border-radius:28px; }.emblem { top:78px; }.emblem img { width:72px; height:86px; }#field { inset:0 -10px; width:calc(100% + 20px); height:100%; }.label-top { top:10px; left:12%; }.label-bottom { bottom:10px; right:10%; }.cross.one { top:46px; }.cross.two { bottom:34px; }.platforms { flex-wrap:wrap; justify-content:center; padding:19px 0; row-gap:10px; }.platform-list { gap:20px; }.platforms .preview { display:none; }.section { padding:65px 0; }.section-heading { display:block; margin-bottom:27px; }h2 { font-size:31px; }.section-intro { margin-top:18px; max-width:340px; }.cards { grid-template-columns:1fr; gap:12px; }.card { padding:27px; }.card-top { margin-bottom:26px; }.card p { max-width:380px; }.card-tags { margin-top:21px; }.install-section { padding:0 0 62px; }.install-panel { padding:26px 20px; }.install-header { margin-bottom:25px; }.install-panel h2 { font-size:26px; }.linux-badge { display:none; }.command { flex-wrap:wrap; gap:8px; padding:13px 12px; }.command code { flex-basis:calc(100% - 22px); font-size:10px; }.copy { margin:5px 0 0 auto; }.install-note { display:block; }.install-note a { display:inline-block; margin-top:11px; }.principle { grid-template-columns:1fr; gap:24px; padding:45px 0 47px; }.principle h2 { font-size:27px; }footer { flex-wrap:wrap; row-gap:20px; }.footer-meta { order:3; flex-basis:100%; }.footer-links { gap:19px; } }
+    @media(prefers-reduced-motion:reduce) { html { scroll-behavior:auto; }*,*::before,*::after { transition:none!important; animation:none!important; }.card:hover { transform:none; } }
   </style>
 </head>
-<body class="vbg-report">
-  <div class="vbg-shell">
-    <a class="vbg-skip-link" href="#main">Skip to content</a>
-    <header class="vbg-header">
-      <div class="vbg-masthead">
-        <a class="vbg-custom-brand" href="./" aria-label="Aegis home">
-          <img src="aegis-mark.svg" alt="">
-          <span class="vbg-custom-brand-name">Aegis</span>
-        </a>
-        <div class="vbg-document-meta">
-          <span class="vbg-state">Developer preview</span>
-          <a class="vbg-custom-meta-link" href="https://github.com/ErzenXz/aegis">GitHub</a>
-        </div>
-      </div>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <div class="shell">
+    <header>
+      <a class="brand" href="./" aria-label="Fortmend home"><img src="fortmend-mark.svg" alt="">Fortmend</a>
+      <nav aria-label="Main navigation"><a href="#capabilities">Overview</a><a class="docs" href="https://github.com/ErzenXz/fortmend/blob/main/docs/LINUX.md">Docs</a><a class="nav-github" href="https://github.com/ErzenXz/fortmend">GitHub <span class="arrow" aria-hidden="true">↗</span></a></nav>
     </header>
-
     <main id="main">
-      <section class="vbg-opening">
-        <div class="vbg-opening-claim">
-          <h1 class="vbg-display">The model never gets a shell.</h1>
-          <p class="vbg-lede">Aegis keeps endpoint authority inside deterministic policy. AI investigates evidence and proposes typed actions. It cannot execute arbitrary commands.</p>
-          <div class="vbg-custom-install">
-            <p class="vbg-label">Install on Linux or macOS</p>
-            <div class="vbg-custom-command">
-              <code id="install-command">curl -fsSL https://aegis.erzen.dev/install.sh | sh</code>
-              <button class="vbg-custom-copy" id="copy-install" type="button">Copy command</button>
-            </div>
-            <p class="vbg-caption">Downloads the matching published release asset, verifies its SHA-256 checksum, then opens guided onboarding.</p>
-          </div>
+      <section class="hero" aria-labelledby="hero-title">
+        <div class="hero-copy">
+          <p class="eyebrow"><span class="status-dot" aria-hidden="true"></span> Autonomous VM security</p>
+          <h1 id="hero-title">Your server.<br><span>Under watch.</span></h1>
+          <p class="hero-description">An autonomous security engineer that lives inside your Linux VM. It watches for attacks, fixes what it can, and checks its work.</p>
+          <div class="hero-actions"><a class="button" href="#install">Install Fortmend <span aria-hidden="true">↓</span></a><a class="text-link" href="https://github.com/ErzenXz/fortmend/blob/main/docs/LINUX.md">Read the docs <span class="arrow" aria-hidden="true">↗</span></a></div>
         </div>
-
-        <aside class="vbg-opening-proof vbg-custom-authority" aria-labelledby="authority-title">
-          <h2 class="vbg-heading-20" id="authority-title">Authority stays deterministic</h2>
-          <ol class="vbg-custom-flow">
-            <li><div><strong>Detect</strong><span>Local sensors keep collecting and classifying events while offline.</span></div></li>
-            <li><div><strong>Investigate</strong><span>fx sees seven security tools, not a native shell or filesystem.</span></div></li>
-            <li><div><strong>Admit</strong><span>Confidence, recovery, health, and observation gates decide every response.</span></div></li>
-            <li><div><strong>Recover</strong><span>Idempotency and rollback remain part of the privileged execution path.</span></div></li>
-          </ol>
-        </aside>
+        <div class="visual" aria-hidden="true"><canvas id="field"></canvas><span class="visual-label label-top">Local intelligence / always on</span><div class="orbital"></div><div class="emblem"><img src="fortmend-mark.svg" alt=""></div><span class="cross one"></span><span class="cross two"></span><span class="visual-label label-bottom"><span class="status-dot"></span> Observe · Repair · Verify</span></div>
       </section>
-
-      <section class="vbg-section" aria-labelledby="works-title">
-        <div class="vbg-reading">
-          <h2 class="vbg-heading-24" id="works-title">What the preview does today</h2>
-          <p>These capabilities run in the public repository now. The implementation ledger keeps incomplete platform work visible.</p>
-        </div>
-        <div class="vbg-table-wrap">
-          <table class="vbg-custom-ledger">
-            <caption>Implemented behavior in the current developer preview.</caption>
-            <tbody>
-              <tr><th scope="row">Endpoint connection</th><td>Device-owned certificates, mutual TLS, certificate-bound identity, and ordered offline replay.</td></tr>
-              <tr><th scope="row">Deterministic detection</th><td>Host posture, YARA signatures, Trivy vulnerabilities, suspicious persistence, authentication anomalies, and ransomware-like file bursts.</td></tr>
-              <tr><th scope="row">Constrained reasoning</th><td>A vendored fx ACP profile with native tools disabled and exactly seven Aegis MCP tools.</td></tr>
-              <tr><th scope="row">Response admission</th><td>Deterministic evidence, confidence ≥ 0.95, 24-hour observation, recovery capability, telemetry health, idempotency, and rollback.</td></tr>
-              <tr><th scope="row">Audit and updates</th><td>SQLite retention, a SHA-256 audit chain, and Ed25519 update-manifest verification primitives.</td></tr>
-            </tbody>
-          </table>
+      <div class="platforms"><span>BUILT FOR THE MACHINE YOU OWN</span><div class="platform-list"><span>Ubuntu 24.04</span><span>Debian 12</span><span>Self-hosted</span></div><span class="preview">Developer preview</span></div>
+      <section class="section" id="capabilities" aria-labelledby="capabilities-title">
+        <div class="section-heading"><div><p class="kicker">A continuous line of defense</p><h2 id="capabilities-title">From signal to repair.</h2></div><p class="section-intro">Security is ongoing work. Fortmend keeps the loop running, right where your software runs.</p></div>
+        <div class="cards">
+          <article class="card"><div class="card-top"><svg class="card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="4.5"/><path d="M12 1v4m0 14v4M1 12h4m14 0h4"/></svg><span class="card-number">01 / OBSERVE</span></div><h3>Notice what changes.</h3><p>Match installed packages against Ubuntu and Debian advisories. Watch SSH activity, suspicious PHP files, and changes to persistence.</p><div class="card-tags">DISTRO CVEs / SSH / PHP / SYSTEMD</div></article>
+          <article class="card"><div class="card-top"><svg class="card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" aria-hidden="true"><path d="m14 3-2 7h7L9 21l2-8H4L14 3Z"/></svg><span class="card-number">02 / REPAIR</span></div><h3>Do something about it.</h3><p>Apply security updates and quarantine detected PHP threats. Let Codex investigate incidents and repair the VM using your ChatGPT account.</p><div class="card-tags">SECURITY PATCHES / QUARANTINE / AI</div></article>
+          <article class="card"><div class="card-top"><svg class="card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" aria-hidden="true"><path d="m12 2 8 4v6c0 5-8 10-8 10S4 17 4 12V6l8-4Z"/><path d="m8 12 3 3 5-6"/></svg><span class="card-number">03 / VERIFY</span></div><h3>Check the actual result.</h3><p>Recheck findings and service health after a response. Keep an audit trail, preserve evidence, and keep unresolved risks visible.</p><div class="card-tags">HEALTH CHECKS / EVIDENCE / AUDIT</div></article>
         </div>
       </section>
-
-      <section class="vbg-band" data-tone="contrast" aria-labelledby="limit-title">
-        <div class="vbg-reading vbg-custom-limit">
-          <h2 class="vbg-heading-24" id="limit-title">It is not production EDR yet</h2>
-          <p class="vbg-lede">Privileged repair remains locked. Native eBPF, ETW, and Endpoint Security sensors are not complete, the Windows fx planner still has upstream portability work, and production macOS monitoring requires Apple entitlement approval.</p>
-          <p><a class="vbg-button" href="https://github.com/ErzenXz/aegis/blob/main/docs/IMPLEMENTATION.md">Read the implementation ledger</a></p>
-        </div>
-      </section>
-
-      <section class="vbg-section" aria-labelledby="start-title">
-        <div class="vbg-reading">
-          <h2 class="vbg-heading-24" id="start-title">Start with a machine you can recover</h2>
-          <p>Run the preview in a lab, inspect the event flow, and contribute one platform adapter or recovery invariant at a time.</p>
-          <p><a class="vbg-button" href="https://github.com/ErzenXz/aegis#hub-and-enrollment">Open the setup guide</a></p>
-        </div>
-      </section>
+      <section class="install-section" id="install" aria-labelledby="install-title"><div class="install-panel">
+        <div class="install-header"><div><p class="kicker">One machine. One command.</p><h2 id="install-title">Give your VM a watchkeeper.</h2><p>Run inside your Ubuntu or Debian VM. The installer guides you through setup.</p></div><span class="linux-badge">LINUX / SYSTEMD</span></div>
+        <div class="command"><span class="prompt" aria-hidden="true">$</span><code id="install-command">curl -fsSL https://raw.githubusercontent.com/ErzenXz/fortmend/main/site/install.sh | sudo sh</code><button class="copy" id="copy-install" type="button" aria-label="Copy install command"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" aria-hidden="true"><rect x="5" y="5" width="8" height="9" rx="1.5"/><path d="M10 5V2H2v9h3"/></svg><span>Copy</span></button></div>
+        <div class="install-note"><p>Root access is required. Sign in to Codex when prompted. Full-control AI can change your VM; start with a recoverable machine and review your policy.</p><a href="https://github.com/ErzenXz/fortmend/blob/main/site/install.sh">Inspect the installer <span aria-hidden="true">↗</span></a></div><span id="copy-status" class="sr-only" role="status" aria-live="polite"></span>
+      </div></section>
+      <section class="principle" aria-labelledby="principle-title"><div><p class="kicker">Your infrastructure. Your control.</p><h2 id="principle-title">Close to the system.<br>Clear about its limits.</h2></div><div><p>Fortmend runs locally as a systemd service. No central platform is required. Connect Codex with your ChatGPT account for autonomous investigation and repair.</p><p>This is a developer preview. Findings depend on sensor coverage and advisory data; a successful check cannot prove a machine is clean. Fleet coordination and container support are future work.</p><a href="https://github.com/ErzenXz/fortmend/blob/main/docs/TESTING.md">See what we test <span class="arrow" aria-hidden="true">↗</span></a></div></section>
     </main>
-
-    <footer class="vbg-footer">
-      <span class="vbg-custom-footer-brand"><img src="aegis-mark.svg" alt=""><span>Aegis</span></span>
-      <span>AGPL-3.0 · Self-hosted developer preview</span>
-    </footer>
+    <footer><a class="brand" href="./"><img src="fortmend-mark.svg" alt="">Fortmend</a><span class="footer-meta">FORTIFY + MEND · AGPL-3.0 · DEVELOPER PREVIEW</span><div class="footer-links"><a href="https://github.com/ErzenXz/fortmend">Source <span aria-hidden="true">↗</span></a><a href="https://github.com/ErzenXz/fortmend/blob/main/docs/LINUX.md">Documentation <span aria-hidden="true">↗</span></a></div></footer>
   </div>
   <script>
-    const button = document.querySelector('#copy-install');
-    const command = document.querySelector('#install-command').textContent;
-    button.addEventListener('click', async () => {
-      try {
-        await navigator.clipboard.writeText(command);
-        button.textContent = 'Copied';
-      } catch {
-        button.textContent = 'Select command';
-        const selection = window.getSelection();
-        const range = document.createRange();
-        range.selectNodeContents(document.querySelector('#install-command'));
-        selection.removeAllRanges();
-        selection.addRange(range);
+    (() => {
+      const copyButton = document.getElementById('copy-install');
+      const command = document.getElementById('install-command');
+      const copyStatus = document.getElementById('copy-status');
+      let resetCopy;
+      copyButton.addEventListener('click', async () => {
+        try {
+          await navigator.clipboard.writeText(command.textContent.trim());
+          copyButton.querySelector('span').textContent = 'Copied';
+          copyStatus.textContent = 'Install command copied to clipboard.';
+        } catch {
+          const selection = window.getSelection();
+          const range = document.createRange();
+          range.selectNodeContents(command);
+          selection.removeAllRanges();
+          selection.addRange(range);
+          copyButton.querySelector('span').textContent = 'Selected';
+          copyStatus.textContent = 'Command selected. Copy it using your keyboard.';
+        }
+        window.clearTimeout(resetCopy);
+        resetCopy = window.setTimeout(() => { copyButton.querySelector('span').textContent = 'Copy'; }, 2500);
+      });
+      const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+      const finePointer = window.matchMedia('(pointer: fine)');
+      document.querySelectorAll('.card').forEach(card => {
+        card.addEventListener('pointermove', event => {
+          if (reducedMotion.matches || !finePointer.matches) return;
+          const rect = card.getBoundingClientRect();
+          card.style.setProperty('--x', `${event.clientX - rect.left}px`);
+          card.style.setProperty('--y', `${event.clientY - rect.top}px`);
+        });
+      });
+      const canvas = document.getElementById('field');
+      const context = canvas.getContext('2d');
+      if (!context) return;
+      const visual = document.querySelector('.visual');
+      let width = 0, height = 0, points = [], frame = 0, visible = true;
+      let pointer = { x: -1000, y: -1000 };
+      const resize = () => {
+        const bounds = canvas.getBoundingClientRect();
+        width = bounds.width; height = bounds.height;
+        const scale = Math.min(window.devicePixelRatio || 1, 2);
+        canvas.width = Math.round(width * scale); canvas.height = Math.round(height * scale);
+        context.setTransform(scale, 0, 0, scale, 0, 0);
+        points = [];
+        const spacing = width < 400 ? 30 : 34;
+        for (let y = 15; y < height; y += spacing) for (let x = 15; x < width; x += spacing) {
+          points.push({ x, y, px:x, py:y, phase:Math.random() * Math.PI * 2 });
+        }
+        if (reducedMotion.matches) draw(0);
+      };
+      function draw(time) {
+        context.clearRect(0, 0, width, height);
+        const animated = !reducedMotion.matches;
+        for (const point of points) {
+          const dx = point.x - pointer.x, dy = point.y - pointer.y;
+          const distance = Math.hypot(dx, dy), influence = animated ? Math.max(0, 1 - distance / 150) : 0;
+          const displacement = influence * influence * 27;
+          const targetX = point.x + (distance > 0 ? dx / distance * displacement : 0);
+          const targetY = point.y + (distance > 0 ? dy / distance * displacement : 0);
+          point.px += (targetX - point.px) * .08;
+          point.py += (targetY - point.py) * .08;
+          const edge = Math.max(0, 1 - Math.hypot((point.x - width / 2) / (width / 2), (point.y - height / 2) / (height / 2)));
+          const pulse = animated ? .7 + Math.sin(time * .0006 + point.phase) * .3 : .7;
+          const alpha = edge * (.18 + pulse * .18 + influence * .5);
+          context.fillStyle = `rgba(190,199,212,${alpha})`;
+          context.beginPath(); context.arc(point.px, point.py, .8 + influence * .6, 0, Math.PI * 2); context.fill();
+          if (influence > .22) {
+            context.strokeStyle = `rgba(190,199,212,${influence * .08})`;
+            context.beginPath(); context.moveTo(point.px - 4, point.py); context.lineTo(point.px + 4, point.py); context.moveTo(point.px, point.py - 4); context.lineTo(point.px, point.py + 4); context.stroke();
+          }
+        }
       }
-    });
+      const loop = time => { frame = 0; if (visible && !document.hidden) draw(time); if (visible && !document.hidden && !reducedMotion.matches) frame = requestAnimationFrame(loop); };
+      const start = () => { if (!frame && visible && !document.hidden && !reducedMotion.matches) frame = requestAnimationFrame(loop); };
+      visual.addEventListener('pointermove', event => {
+        if (!finePointer.matches || reducedMotion.matches) return;
+        const bounds = canvas.getBoundingClientRect(); pointer.x = event.clientX - bounds.left; pointer.y = event.clientY - bounds.top;
+      });
+      visual.addEventListener('pointerleave', () => { pointer.x = -1000; pointer.y = -1000; });
+      window.addEventListener('resize', resize, { passive:true });
+      document.addEventListener('visibilitychange', start);
+      reducedMotion.addEventListener('change', () => { if (reducedMotion.matches) { cancelAnimationFrame(frame); frame = 0; pointer = { x:-1000,y:-1000 }; draw(0); } else start(); });
+      if ('IntersectionObserver' in window) new IntersectionObserver(entries => { visible = entries[0].isIntersecting; start(); }).observe(visual);
+      resize(); start();
+    })();
   </script>
 </body>
 </html>

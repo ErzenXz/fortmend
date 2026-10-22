@@ -4,7 +4,7 @@ This document separates implemented behavior from the production EDR roadmap.
 
 ## Ubuntu/Debian autonomous VM core
 
-`aegis protect` now implements a separate local Linux control path. It includes
+`fortmend protect` now implements a separate local Linux control path. It includes
 official-vendor installed-source-package CVE checks, security-only APT updates,
 live SSH journals with cursor-gap recovery, persistence/PHP file monitoring,
 recoverable webshell quarantine, and managed Codex app-server authentication.
@@ -59,7 +59,7 @@ are not implemented. The legacy cross-platform response MCP remains locked.
 - Upstream: `vercel-labs/fx`
 - Version: `v0.0.5`
 - Commit: `df7e6245e1992758d4060c97477ceafa27770551`
-- Local fork patch: `fx acp --aegis` disables native tools and preserves only
+- Local fork patch: `fx acp --fortmend` disables native tools and preserves only
   ACP-provided MCP access.
 - `zig fmt --check src/`: pass.
 - `zig build test`: 8,466 pass, 2 skip, 1 upstream ANSI presentation failure.

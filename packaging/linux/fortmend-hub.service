@@ -1,19 +1,19 @@
 [Unit]
-Description=Aegis self-hosted security hub
+Description=Fortmend self-hosted security hub
 After=network-online.target
 Wants=network-online.target
 
 [Service]
 Type=simple
-ExecStart=/usr/local/bin/aegis hub --data-dir /var/lib/aegis --tls-hosts localhost,127.0.0.1
-User=aegis
-Group=aegis
+ExecStart=/usr/local/bin/fortmend hub --data-dir /var/lib/fortmend --tls-hosts localhost,127.0.0.1
+User=fortmend
+Group=fortmend
 Restart=always
 RestartSec=5
 NoNewPrivileges=true
 PrivateTmp=true
 ProtectSystem=strict
-ReadWritePaths=/var/lib/aegis
+ReadWritePaths=/var/lib/fortmend
 
 [Install]
 WantedBy=multi-user.target

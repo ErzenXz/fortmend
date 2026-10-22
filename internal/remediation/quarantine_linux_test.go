@@ -10,7 +10,7 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/ErzenXz/aegis/internal/monitor"
+	"github.com/ErzenXz/fortmend/internal/monitor"
 
 	"golang.org/x/sys/unix"
 )
@@ -200,10 +200,10 @@ func TestLinuxTargetReplacementRaceRestoresWithoutOverwrite(t *testing.T) {
 }
 
 func TestLiveDisposableQuarantine(t *testing.T) {
-	if os.Getenv("AEGIS_MONITOR_INTEGRATION") != "1" {
-		t.Skip("set AEGIS_MONITOR_INTEGRATION=1 in marked disposable VM")
+	if os.Getenv("FORTMEND_MONITOR_INTEGRATION") != "1" {
+		t.Skip("set FORTMEND_MONITOR_INTEGRATION=1 in marked disposable VM")
 	}
-	if _, err := os.Stat("/etc/aegis-disposable-integration"); err != nil {
+	if _, err := os.Stat("/etc/fortmend-disposable-integration"); err != nil {
 		t.Fatal("refusing live integration without disposable VM marker")
 	}
 	TestLinuxQuarantineAndIdempotentReplay(t)

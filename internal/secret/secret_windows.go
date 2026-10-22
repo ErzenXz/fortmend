@@ -10,7 +10,7 @@ import (
 	"golang.org/x/sys/windows"
 )
 
-var dpapiHeader = []byte("aegis-dpapi-v1\n")
+var dpapiHeader = []byte("fortmend-dpapi-v1\n")
 
 func Seal(plaintext []byte) ([]byte, error) {
 	if len(plaintext) == 0 {
@@ -27,10 +27,14 @@ func Seal(plaintext []byte) ([]byte, error) {
 }
 
 func Open(sealed []byte) ([]byte, error) {
-	if !bytes.HasPrefix(sealed, dpapiHeader) || len(sealed) == len(dpapiHeader) {
-		return nil, fmt.Errorf("secret is not protected by Aegis DPAPI storage")
+	header := dpapiHeader
+	if bytes.HasPrefix(sealed, []byte("aegis-dpapi-v1\n")) {
+		header = []byte("aegis-dpapi-v1\n")
 	}
-	ciphertext := sealed[len(dpapiHeader):]
+	if !bytes.HasPrefix(sealed, header) || len(sealed) == len(header) {
+		return nil, fmt.Errorf("secret is not protected by Fortmend DPAPI storage")
+	}
+	ciphertext := sealed[len(header):]
 	input := windows.DataBlob{Size: uint32(len(ciphertext)), Data: &ciphertext[0]}
 	var output windows.DataBlob
 	if err := windows.CryptUnprotectData(&input, nil, nil, 0, nil, windows.CRYPTPROTECT_UI_FORBIDDEN, &output); err != nil {

@@ -21,13 +21,13 @@ import (
 	"strings"
 	"time"
 
-	"github.com/ErzenXz/aegis/internal/agent"
-	"github.com/ErzenXz/aegis/internal/detection"
-	"github.com/ErzenXz/aegis/internal/hub"
-	"github.com/ErzenXz/aegis/internal/model"
-	"github.com/ErzenXz/aegis/internal/pki"
-	"github.com/ErzenXz/aegis/internal/sensors"
-	"github.com/ErzenXz/aegis/internal/store"
+	"github.com/ErzenXz/fortmend/internal/agent"
+	"github.com/ErzenXz/fortmend/internal/detection"
+	"github.com/ErzenXz/fortmend/internal/hub"
+	"github.com/ErzenXz/fortmend/internal/model"
+	"github.com/ErzenXz/fortmend/internal/pki"
+	"github.com/ErzenXz/fortmend/internal/sensors"
+	"github.com/ErzenXz/fortmend/internal/store"
 )
 
 func runHub(ctx context.Context, args []string, stdout, stderr io.Writer) error {
@@ -59,7 +59,7 @@ func runHub(ctx context.Context, args []string, stdout, stderr io.Writer) error 
 	if err != nil {
 		return err
 	}
-	database, err := store.Open(filepath.Join(*dataDir, "aegis.db"), store.Retention{RawEvents: 30 * 24 * time.Hour, Findings: 180 * 24 * time.Hour})
+	database, err := store.Open(filepath.Join(*dataDir, "fortmend.db"), store.Retention{RawEvents: 30 * 24 * time.Hour, Findings: 180 * 24 * time.Hour})
 	if err != nil {
 		return err
 	}
@@ -73,7 +73,7 @@ func runHub(ctx context.Context, args []string, stdout, stderr io.Writer) error 
 				return
 			case now := <-ticker.C:
 				if err := database.Prune(context.Background(), now.UTC()); err != nil {
-					fmt.Fprintf(stderr, "aegis hub retention: %v\n", err)
+					fmt.Fprintf(stderr, "fortmend hub retention: %v\n", err)
 				}
 			}
 		}
@@ -101,14 +101,14 @@ func runHub(ctx context.Context, args []string, stdout, stderr io.Writer) error 
 		defer cancel()
 		_ = server.Shutdown(shutdownCtx)
 	}()
-	fmt.Fprintf(stdout, "Aegis hub listening on https://%s\n", listener.Addr())
+	fmt.Fprintf(stdout, "Fortmend hub listening on https://%s\n", listener.Addr())
 	fmt.Fprintf(stdout, "Enrollment token (single use for this run): %s\n", enrollmentToken)
 	fmt.Fprintf(stdout, "Hub CA: %s\n", filepath.Join(*dataDir, "pki", "ca.pem"))
 	fmt.Fprintf(stdout, "Hub CA SHA-256: %s\n", authority.FingerprintSHA256())
 	fmt.Fprintf(stdout, "Security MCP credential: %s\n", filepath.Join(*dataDir, "mcp-token"))
 	if *publicURL != "" {
 		fmt.Fprintf(stdout, "\nInstall an endpoint with one command:\n")
-		fmt.Fprintf(stdout, "curl -fsSL https://aegis.erzen.dev/install.sh | sh -s -- --role agent --hub %s --token %s --ca-sha256 %s\n", shellQuote(*publicURL), shellQuote(enrollmentToken), shellQuote(authority.FingerprintSHA256()))
+		fmt.Fprintf(stdout, "curl -fsSL https://fortmend.erzen.dev/install.sh | sh -s -- --role agent --hub %s --token %s --ca-sha256 %s\n", shellQuote(*publicURL), shellQuote(enrollmentToken), shellQuote(authority.FingerprintSHA256()))
 	}
 	err = server.Serve(tlsListener)
 	if errors.Is(err, http.ErrServerClosed) {
@@ -161,13 +161,13 @@ func runOnboard(ctx context.Context, args []string, stdout, stderr io.Writer) er
 	caFingerprint := flags.String("ca-sha256", "", "hub CA SHA-256 fingerprint")
 	publicURL := flags.String("public-url", "", "public hub HTTPS URL")
 	address := flags.String("addr", ":7443", "hub HTTPS listen address")
-	dataDir := flags.String("data-dir", defaultDataDir(), "Aegis data directory")
+	dataDir := flags.String("data-dir", defaultDataDir(), "Fortmend data directory")
 	if err := flags.Parse(args); err != nil {
 		return err
 	}
 	reader := bufio.NewReader(os.Stdin)
 	if *role == "" {
-		fmt.Fprintln(stdout, "Aegis onboarding")
+		fmt.Fprintln(stdout, "Fortmend onboarding")
 		fmt.Fprint(stdout, "Protect this machine as a hub or agent? [hub/agent]: ")
 		value, _ := reader.ReadString('\n')
 		*role = strings.ToLower(strings.TrimSpace(value))
@@ -293,7 +293,7 @@ func runDoctor(_ context.Context, args []string, stdout, stderr io.Writer) error
 		Detail string `json:"detail"`
 	}
 	checks := []check{{Name: "platform", Status: "ok", Detail: "developer-preview user-mode sensors"}}
-	for _, name := range []string{"osqueryi", "trivy", "yara", "aegis-fx"} {
+	for _, name := range []string{"osqueryi", "trivy", "yara", "fortmend-fx"} {
 		path, err := exec.LookPath(name)
 		if err != nil {
 			checks = append(checks, check{Name: name, Status: "warn", Detail: "not installed"})
@@ -306,18 +306,18 @@ func runDoctor(_ context.Context, args []string, stdout, stderr io.Writer) error
 
 func runProvider(ctx context.Context, args []string, stdout, stderr io.Writer) error {
 	if len(args) == 0 {
-		return fmt.Errorf("usage: aegis provider <login|logout|status|setup> [vercel|codex|grok]")
+		return fmt.Errorf("usage: fortmend provider <login|logout|status|setup> [vercel|codex|grok]")
 	}
 	var fxArgs []string
 	switch args[0] {
 	case "login":
 		if len(args) != 2 || !oneOf(args[1], "vercel", "codex", "grok") {
-			return fmt.Errorf("usage: aegis provider login <vercel|codex|grok>")
+			return fmt.Errorf("usage: fortmend provider login <vercel|codex|grok>")
 		}
 		fxArgs = []string{"login", args[1]}
 	case "logout":
 		if len(args) != 2 || !oneOf(args[1], "codex", "grok") {
-			return fmt.Errorf("usage: aegis provider logout <codex|grok>")
+			return fmt.Errorf("usage: fortmend provider logout <codex|grok>")
 		}
 		fxArgs = []string{"logout", args[1]}
 	case "status":
@@ -327,9 +327,9 @@ func runProvider(ctx context.Context, args []string, stdout, stderr io.Writer) e
 	default:
 		return fmt.Errorf("unknown provider command %q", args[0])
 	}
-	binary := os.Getenv("AEGIS_FX_PATH")
+	binary := os.Getenv("FORTMEND_FX_PATH")
 	if binary == "" {
-		binary = "aegis-fx"
+		binary = "fortmend-fx"
 	}
 	command := exec.CommandContext(ctx, binary, fxArgs...)
 	command.Stdin, command.Stdout, command.Stderr = os.Stdin, stdout, stderr
@@ -356,7 +356,7 @@ func loadOrCreateAuthority(directory string) (*pki.Authority, error) {
 	if !os.IsNotExist(err) {
 		return nil, err
 	}
-	authority, err = pki.NewAuthority("Aegis Local Hub CA", time.Now().UTC())
+	authority, err = pki.NewAuthority("Fortmend Local Hub CA", time.Now().UTC())
 	if err != nil {
 		return nil, err
 	}
@@ -388,9 +388,9 @@ func mustRandomToken() string {
 func defaultDataDir() string {
 	home, err := os.UserHomeDir()
 	if err != nil {
-		return ".aegis"
+		return ".fortmend"
 	}
-	return filepath.Join(home, ".aegis")
+	return filepath.Join(home, ".fortmend")
 }
 
 func splitNonEmpty(value string) []string {

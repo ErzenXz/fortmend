@@ -3,7 +3,7 @@ package protection
 import (
 	"context"
 	"encoding/json"
-	"github.com/ErzenXz/aegis/internal/sensors"
+	"github.com/ErzenXz/fortmend/internal/sensors"
 	"os"
 	"path/filepath"
 )

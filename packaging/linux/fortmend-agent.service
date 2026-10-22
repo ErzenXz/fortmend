@@ -1,11 +1,11 @@
 [Unit]
-Description=Aegis endpoint protection agent
+Description=Fortmend endpoint protection agent
 After=network-online.target
 Wants=network-online.target
 
 [Service]
 Type=simple
-ExecStart=/usr/local/bin/aegis agent --config /var/lib/aegis/agent.json
+ExecStart=/usr/local/bin/fortmend agent --config /var/lib/fortmend/agent.json
 User=root
 Restart=always
 RestartSec=5

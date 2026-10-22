@@ -5,8 +5,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/ErzenXz/aegis/internal/detection"
-	"github.com/ErzenXz/aegis/internal/model"
+	"github.com/ErzenXz/fortmend/internal/detection"
+	"github.com/ErzenXz/fortmend/internal/model"
 )
 
 func TestKnownMalwareEventBecomesCriticalDeterministicFinding(t *testing.T) {

@@ -10,17 +10,17 @@ import (
 	"testing"
 	"time"
 
-	"github.com/ErzenXz/aegis/internal/agent"
-	"github.com/ErzenXz/aegis/internal/detection"
-	"github.com/ErzenXz/aegis/internal/hub"
-	"github.com/ErzenXz/aegis/internal/model"
-	"github.com/ErzenXz/aegis/internal/pki"
-	"github.com/ErzenXz/aegis/internal/store"
+	"github.com/ErzenXz/fortmend/internal/agent"
+	"github.com/ErzenXz/fortmend/internal/detection"
+	"github.com/ErzenXz/fortmend/internal/hub"
+	"github.com/ErzenXz/fortmend/internal/model"
+	"github.com/ErzenXz/fortmend/internal/pki"
+	"github.com/ErzenXz/fortmend/internal/store"
 	"net/http/httptest"
 )
 
 func TestDeviceEnrollsAndPostsOverMutualTLS(t *testing.T) {
-	authority, err := pki.NewAuthority("Aegis Test CA", time.Now().UTC())
+	authority, err := pki.NewAuthority("Fortmend Test CA", time.Now().UTC())
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -28,7 +28,7 @@ func TestDeviceEnrollsAndPostsOverMutualTLS(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	db, err := store.Open(filepath.Join(t.TempDir(), "aegis.db"), store.Retention{RawEvents: 30 * 24 * time.Hour, Findings: 180 * 24 * time.Hour})
+	db, err := store.Open(filepath.Join(t.TempDir(), "fortmend.db"), store.Retention{RawEvents: 30 * 24 * time.Hour, Findings: 180 * 24 * time.Hour})
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -62,7 +62,7 @@ func TestDeviceEnrollsAndPostsOverMutualTLS(t *testing.T) {
 }
 
 func TestDeviceCanEnrollWithPinnedHubCAFingerprint(t *testing.T) {
-	authority, err := pki.NewAuthority("Aegis Test CA", time.Now().UTC())
+	authority, err := pki.NewAuthority("Fortmend Test CA", time.Now().UTC())
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -70,7 +70,7 @@ func TestDeviceCanEnrollWithPinnedHubCAFingerprint(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	db, err := store.Open(filepath.Join(t.TempDir(), "aegis.db"), store.Retention{})
+	db, err := store.Open(filepath.Join(t.TempDir(), "fortmend.db"), store.Retention{})
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -94,7 +94,7 @@ func TestAgentConfigRoundTripsThroughPlatformSecretStorage(t *testing.T) {
 	path := filepath.Join(t.TempDir(), "agent.json")
 	config := agent.Config{
 		SchemaVersion: model.SchemaVersion,
-		HubURL:        "https://aegis.invalid",
+		HubURL:        "https://fortmend.invalid",
 		DeviceID:      "device-1",
 		EnrolledAt:    time.Now().UTC(),
 		Certificate:   "certificate-fixture",

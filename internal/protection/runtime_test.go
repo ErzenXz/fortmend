@@ -15,14 +15,14 @@ import (
 	"testing"
 	"time"
 
-	"github.com/ErzenXz/aegis/internal/agent"
-	"github.com/ErzenXz/aegis/internal/detection"
-	"github.com/ErzenXz/aegis/internal/hub"
-	"github.com/ErzenXz/aegis/internal/model"
-	"github.com/ErzenXz/aegis/internal/monitor"
-	"github.com/ErzenXz/aegis/internal/protection"
-	"github.com/ErzenXz/aegis/internal/sensors"
-	"github.com/ErzenXz/aegis/internal/store"
+	"github.com/ErzenXz/fortmend/internal/agent"
+	"github.com/ErzenXz/fortmend/internal/detection"
+	"github.com/ErzenXz/fortmend/internal/hub"
+	"github.com/ErzenXz/fortmend/internal/model"
+	"github.com/ErzenXz/fortmend/internal/monitor"
+	"github.com/ErzenXz/fortmend/internal/protection"
+	"github.com/ErzenXz/fortmend/internal/sensors"
+	"github.com/ErzenXz/fortmend/internal/store"
 )
 
 type adapter struct {
@@ -66,7 +66,7 @@ func eventAdapter(o sensors.Observation) sensors.Adapter {
 	return adapter{"fixture", func(_ context.Context, emit func(sensors.Observation) error) error { return emit(o) }}
 }
 func shellObservation() sensors.Observation {
-	return sensors.Observation{Kind: "webshell.suspicious", Severity: model.SeverityHigh, Confidence: .99, DetectorIDs: []string{"aegis:fixture-shell"}, Attributes: map[string]string{"path": "/var/www/fixture/hack.php", "sha256": "fixture-sha", "occurrenceId": "fixture-occurrence", "signature": "php-request-command-execution", "quarantineEligible": "true"}}
+	return sensors.Observation{Kind: "webshell.suspicious", Severity: model.SeverityHigh, Confidence: .99, DetectorIDs: []string{"fortmend:fixture-shell"}, Attributes: map[string]string{"path": "/var/www/fixture/hack.php", "sha256": "fixture-sha", "occurrenceId": "fixture-occurrence", "signature": "php-request-command-execution", "quarantineEligible": "true"}}
 }
 func containsKind(events []model.SecurityEvent, kind string) bool {
 	for _, e := range events {

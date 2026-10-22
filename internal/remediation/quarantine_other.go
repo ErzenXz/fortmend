@@ -6,8 +6,8 @@ import (
 	"context"
 	"errors"
 
-	"github.com/ErzenXz/aegis/internal/model"
-	"github.com/ErzenXz/aegis/internal/sensors"
+	"github.com/ErzenXz/fortmend/internal/model"
+	"github.com/ErzenXz/fortmend/internal/sensors"
 )
 
 func (*Quarantine) apply(context.Context, model.SecurityEvent, string) (sensors.Observation, error) {

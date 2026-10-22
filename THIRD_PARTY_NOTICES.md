@@ -10,8 +10,8 @@ fx is licensed under Apache License 2.0. Its unmodified license is retained at
 `third_party/fx/LICENSE`, and its upstream third-party attributions are retained
 at `third_party/fx/THIRD_PARTY_NOTICES.md`.
 
-Aegis carries a local modification that adds the security-only
-`fx acp --aegis` launch profile. Modified files remain clearly identifiable in
+Fortmend carries a local modification that adds the security-only
+`fx acp --fortmend` launch profile. Modified files remain clearly identifiable in
 the repository history and diff from the pinned upstream commit.
 
 ## Go dependencies

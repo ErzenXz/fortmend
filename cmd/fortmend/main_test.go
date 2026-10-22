@@ -6,7 +6,7 @@ import (
 	"encoding/json"
 	"testing"
 
-	"github.com/ErzenXz/aegis/internal/model"
+	"github.com/ErzenXz/fortmend/internal/model"
 )
 
 func TestVersionCommand(t *testing.T) {
@@ -14,7 +14,7 @@ func TestVersionCommand(t *testing.T) {
 	if code := run(context.Background(), []string{"version"}, &stdout, &stderr); code != 0 {
 		t.Fatalf("code=%d stderr=%s", code, stderr.String())
 	}
-	if stdout.String() != "aegis 0.1.0-dev (fx v0.0.5)\n" {
+	if stdout.String() != "fortmend 0.2.0-preview.1 (fx v0.0.5)\n" {
 		t.Fatalf("unexpected version: %q", stdout.String())
 	}
 }

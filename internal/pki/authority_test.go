@@ -10,11 +10,11 @@ import (
 	"testing"
 	"time"
 
-	"github.com/ErzenXz/aegis/internal/pki"
+	"github.com/ErzenXz/fortmend/internal/pki"
 )
 
 func TestAuthorityIssuesServerAndDeviceCertificates(t *testing.T) {
-	authority, err := pki.NewAuthority("Aegis Test CA", time.Now().UTC())
+	authority, err := pki.NewAuthority("Fortmend Test CA", time.Now().UTC())
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -39,14 +39,14 @@ func TestAuthorityIssuesServerAndDeviceCertificates(t *testing.T) {
 	if _, err := deviceCert.Verify(x509.VerifyOptions{Roots: roots, KeyUsages: []x509.ExtKeyUsage{x509.ExtKeyUsageClientAuth}}); err != nil {
 		t.Fatalf("device certificate did not verify: %v", err)
 	}
-	if deviceCert.Subject.CommonName != "aegis-device:device-1" {
+	if deviceCert.Subject.CommonName != "fortmend-device:device-1" {
 		t.Fatalf("unexpected device identity: %q", deviceCert.Subject.CommonName)
 	}
 }
 
 func TestAuthorityPersistsWithPrivateKeyPermissions(t *testing.T) {
 	directory := filepath.Join(t.TempDir(), "pki")
-	authority, err := pki.NewAuthority("Aegis Test CA", time.Now().UTC())
+	authority, err := pki.NewAuthority("Fortmend Test CA", time.Now().UTC())
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -83,7 +83,7 @@ func TestAuthorityPersistsWithPrivateKeyPermissions(t *testing.T) {
 }
 
 func TestAuthoritySignsDeviceOwnedCSR(t *testing.T) {
-	authority, err := pki.NewAuthority("Aegis Test CA", time.Now().UTC())
+	authority, err := pki.NewAuthority("Fortmend Test CA", time.Now().UTC())
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -100,7 +100,7 @@ func TestAuthoritySignsDeviceOwnedCSR(t *testing.T) {
 		t.Fatalf("signed certificate does not match device key: %v", err)
 	}
 	certificate, _ := x509.ParseCertificate(credential.Certificate[0])
-	if certificate.Subject.CommonName != "aegis-device:device-3" {
+	if certificate.Subject.CommonName != "fortmend-device:device-3" {
 		t.Fatalf("unexpected identity: %q", certificate.Subject.CommonName)
 	}
 }

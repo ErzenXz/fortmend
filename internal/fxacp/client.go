@@ -10,8 +10,8 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/ErzenXz/aegis/internal/model"
-	"github.com/ErzenXz/aegis/internal/reasoner"
+	"github.com/ErzenXz/fortmend/internal/model"
+	"github.com/ErzenXz/fortmend/internal/reasoner"
 )
 
 type Config struct {
@@ -26,7 +26,7 @@ type ProcessClient struct{ config Config }
 
 func New(config Config) *ProcessClient {
 	if config.Binary == "" {
-		config.Binary = "aegis-fx"
+		config.Binary = "fortmend-fx"
 	}
 	return &ProcessClient{config: config}
 }
@@ -44,7 +44,7 @@ type rpcMessage struct {
 }
 
 func (client *ProcessClient) Turn(ctx context.Context, request reasoner.TurnRequest) (reasoner.TurnResult, error) {
-	args := []string{"acp", "--aegis"}
+	args := []string{"acp", "--fortmend"}
 	if client.config.Model != "" {
 		args = append(args, "--model", client.config.Model)
 	}
@@ -98,7 +98,7 @@ func (client *ProcessClient) Turn(ctx context.Context, request reasoner.TurnRequ
 		if client.config.MCPToken != "" {
 			headers = append(headers, map[string]string{"name": "Authorization", "value": "Bearer " + client.config.MCPToken})
 		}
-		mcpServers = append(mcpServers, map[string]any{"type": "http", "name": "aegis-security", "url": client.config.MCPURL, "headers": headers})
+		mcpServers = append(mcpServers, map[string]any{"type": "http", "name": "fortmend-security", "url": client.config.MCPURL, "headers": headers})
 	}
 	if err := sendRequest(encoder, 2, "session/new", map[string]any{"mcpServers": mcpServers}); err != nil {
 		return fail(err)
@@ -115,7 +115,7 @@ func (client *ProcessClient) Turn(ctx context.Context, request reasoner.TurnRequ
 	}
 	prompt := []map[string]any{
 		{"type": "text", "text": request.Instructions + "\nReturn exactly one JSON object with summary, actions, and citations."},
-		{"type": "resource", "resource": map[string]any{"uri": "aegis://incident/evidence.json", "text": request.EvidenceJSON}},
+		{"type": "resource", "resource": map[string]any{"uri": "fortmend://incident/evidence.json", "text": request.EvidenceJSON}},
 	}
 	if err := sendRequest(encoder, 3, "session/prompt", map[string]any{"sessionId": session.SessionID, "prompt": prompt}); err != nil {
 		return fail(err)

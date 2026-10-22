@@ -9,7 +9,7 @@ import (
 	"path/filepath"
 	"sync"
 
-	"github.com/ErzenXz/aegis/internal/model"
+	"github.com/ErzenXz/fortmend/internal/model"
 )
 
 type Queue struct {
@@ -137,7 +137,7 @@ func (q *Queue) persist() error {
 	if err := os.MkdirAll(filepath.Dir(q.path), 0o700); err != nil {
 		return err
 	}
-	temporary, err := os.CreateTemp(filepath.Dir(q.path), ".aegis-events-*")
+	temporary, err := os.CreateTemp(filepath.Dir(q.path), ".fortmend-events-*")
 	if err != nil {
 		return err
 	}

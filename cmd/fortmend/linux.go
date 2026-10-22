@@ -13,16 +13,16 @@ import (
 	"strings"
 	"time"
 
-	"github.com/ErzenXz/aegis/internal/agent"
-	"github.com/ErzenXz/aegis/internal/codexapp"
-	"github.com/ErzenXz/aegis/internal/model"
-	"github.com/ErzenXz/aegis/internal/monitor"
-	"github.com/ErzenXz/aegis/internal/patching"
-	"github.com/ErzenXz/aegis/internal/protection"
-	"github.com/ErzenXz/aegis/internal/reasoner"
-	"github.com/ErzenXz/aegis/internal/remediation"
-	"github.com/ErzenXz/aegis/internal/sensors"
-	"github.com/ErzenXz/aegis/internal/vulnerability"
+	"github.com/ErzenXz/fortmend/internal/agent"
+	"github.com/ErzenXz/fortmend/internal/codexapp"
+	"github.com/ErzenXz/fortmend/internal/model"
+	"github.com/ErzenXz/fortmend/internal/monitor"
+	"github.com/ErzenXz/fortmend/internal/patching"
+	"github.com/ErzenXz/fortmend/internal/protection"
+	"github.com/ErzenXz/fortmend/internal/reasoner"
+	"github.com/ErzenXz/fortmend/internal/remediation"
+	"github.com/ErzenXz/fortmend/internal/sensors"
+	"github.com/ErzenXz/fortmend/internal/vulnerability"
 )
 
 type linuxPolicy struct {
@@ -62,11 +62,12 @@ func loadLinuxPolicy(path string) (linuxPolicy, error) {
 	if err := d.Decode(&extra); err != io.EOF {
 		return p, fmt.Errorf("policy must contain one JSON object")
 	}
-	if p.SchemaVersion != "aegis.linux/v1" {
+	if p.SchemaVersion != "fortmend.linux/v1" && p.SchemaVersion != "aegis.linux/v1" {
 		return p, fmt.Errorf("unsupported Linux policy schema")
 	}
+	p.SchemaVersion = "fortmend.linux/v1"
 	if p.StateDir == "" {
-		p.StateDir = "/var/lib/aegis/protection"
+		p.StateDir = "/var/lib/fortmend/protection"
 	}
 	if !filepath.IsAbs(p.StateDir) || filepath.Clean(p.StateDir) == "/" {
 		return p, fmt.Errorf("absolute dedicated stateDir required")
@@ -93,7 +94,7 @@ func loadLinuxPolicy(path string) (linuxPolicy, error) {
 		return p, fmt.Errorf("absolute AI workDir required")
 	}
 	if p.AI.Binary == "" {
-		p.AI.Binary = "/usr/local/bin/codex"
+		p.AI.Binary = "/usr/local/lib/fortmend/codex"
 	}
 	if !filepath.IsAbs(p.AI.Binary) {
 		return p, fmt.Errorf("absolute Codex binary path required")
@@ -114,7 +115,7 @@ func loadLinuxPolicy(path string) (linuxPolicy, error) {
 func runProtect(ctx context.Context, args []string, stdout, stderr io.Writer) error {
 	flags := flag.NewFlagSet("protect", flag.ContinueOnError)
 	flags.SetOutput(stderr)
-	path := flags.String("config", "/etc/aegis/linux.json", "root-owned Linux policy JSON")
+	path := flags.String("config", "/etc/fortmend/linux.json", "root-owned Linux policy JSON")
 	once := flags.Bool("once", false, "run monitor, assessment, updates and verification once")
 	status := flags.Bool("status", false, "show local state without starting protection")
 	ack := flags.Bool("acknowledge-update-failure", false, "acknowledge investigated update failure; does not repair packages")
@@ -164,7 +165,7 @@ func runProtect(ctx context.Context, args []string, stdout, stderr io.Writer) er
 	if err != nil {
 		return err
 	}
-	r := &protection.Runtime{DeviceID: p.DeviceID, StateDir: p.StateDir, Queue: queue, Monitor: monitor.New(monitor.Config{StateDir: filepath.Join(p.StateDir, "monitor"), WebRoots: p.WebRoots}), Assessment: &vulnerability.Scanner{Runner: runner, CacheDir: filepath.Join(p.StateDir, "vulnerability")}, Updater: updater, PollInterval: time.Duration(p.PollSeconds) * time.Second, AssessmentInterval: time.Duration(p.AssessmentMinutes) * time.Minute, FullControl: p.AI.Enabled && p.AI.Mode == "full-control", Report: func(err error) { fmt.Fprintf(stderr, "aegis protection: %v\n", err) }}
+	r := &protection.Runtime{DeviceID: p.DeviceID, StateDir: p.StateDir, Queue: queue, Monitor: monitor.New(monitor.Config{StateDir: filepath.Join(p.StateDir, "monitor"), WebRoots: p.WebRoots}), Assessment: &vulnerability.Scanner{Runner: runner, CacheDir: filepath.Join(p.StateDir, "vulnerability")}, Updater: updater, PollInterval: time.Duration(p.PollSeconds) * time.Second, AssessmentInterval: time.Duration(p.AssessmentMinutes) * time.Minute, FullControl: p.AI.Enabled && p.AI.Mode == "full-control", Report: func(err error) { fmt.Fprintf(stderr, "fortmend protection: %v\n", err) }}
 	log := &protection.EventLog{Path: filepath.Join(p.StateDir, "history.jsonl"), MaxBytes: 16 * 1024 * 1024}
 	r.Post = log.Append
 	if p.HubConfig != "" {
@@ -228,18 +229,18 @@ func runProtect(ctx context.Context, args []string, stdout, stderr io.Writer) er
 		}
 		return err
 	}
-	fmt.Fprintf(stdout, "Aegis protection starting: device=%s updates=%t AI=%s enabled=%t\n", p.DeviceID, p.SecurityUpdates, p.AI.Mode, p.AI.Enabled)
+	fmt.Fprintf(stdout, "Fortmend protection starting: device=%s updates=%t AI=%s enabled=%t\n", p.DeviceID, p.SecurityUpdates, p.AI.Mode, p.AI.Enabled)
 	return r.Run(ctx, *once)
 }
 
 func runAI(ctx context.Context, args []string, stdout, stderr io.Writer) error {
 	if len(args) == 0 {
-		return fmt.Errorf("usage: aegis ai <login|status> --state-dir /var/lib/aegis/protection")
+		return fmt.Errorf("usage: fortmend ai <login|status> --state-dir /var/lib/fortmend/protection")
 	}
 	flags := flag.NewFlagSet("ai", flag.ContinueOnError)
 	flags.SetOutput(stderr)
-	state := flags.String("state-dir", "/var/lib/aegis/protection", "protection state directory")
-	binary := flags.String("binary", "/usr/local/bin/codex", "official Codex CLI path")
+	state := flags.String("state-dir", "/var/lib/fortmend/protection", "protection state directory")
+	binary := flags.String("binary", "/usr/local/lib/fortmend/codex", "official Codex CLI path")
 	if err := flags.Parse(args[1:]); err != nil {
 		return err
 	}

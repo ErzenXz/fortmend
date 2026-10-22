@@ -9,14 +9,14 @@ import (
 	"testing"
 	"time"
 
-	"github.com/ErzenXz/aegis/internal/sensors"
+	"github.com/ErzenXz/fortmend/internal/sensors"
 )
 
 func TestLiveDisposableJournalSSHAttack(t *testing.T) {
-	if os.Getenv("AEGIS_MONITOR_INTEGRATION") != "1" {
-		t.Skip("set AEGIS_MONITOR_INTEGRATION=1 in a marked disposable VM")
+	if os.Getenv("FORTMEND_MONITOR_INTEGRATION") != "1" {
+		t.Skip("set FORTMEND_MONITOR_INTEGRATION=1 in a marked disposable VM")
 	}
-	if _, err := os.Stat("/etc/aegis-disposable-integration"); err != nil {
+	if _, err := os.Stat("/etc/fortmend-disposable-integration"); err != nil {
 		t.Fatal("refusing live integration without disposable VM marker")
 	}
 	if os.Geteuid() != 0 {
@@ -38,11 +38,11 @@ func TestLiveDisposableJournalSSHAttack(t *testing.T) {
 	}
 	got = nil
 	for i := 0; i < 10; i++ {
-		if b, err := exec.CommandContext(ctx, "logger", "-t", "sshd", "--", "Failed password for invalid user aegis-fixture from "+ip+" port 42000 ssh2").CombinedOutput(); err != nil {
+		if b, err := exec.CommandContext(ctx, "logger", "-t", "sshd", "--", "Failed password for invalid user fortmend-fixture from "+ip+" port 42000 ssh2").CombinedOutput(); err != nil {
 			t.Fatalf("logger: %v %s", err, b)
 		}
 	}
-	if b, err := exec.CommandContext(ctx, "logger", "-t", "sshd", "--", "Accepted publickey for aegis-fixture from "+ip+" port 42000 ssh2").CombinedOutput(); err != nil {
+	if b, err := exec.CommandContext(ctx, "logger", "-t", "sshd", "--", "Accepted publickey for fortmend-fixture from "+ip+" port 42000 ssh2").CombinedOutput(); err != nil {
 		t.Fatalf("logger accepted: %v %s", err, b)
 	}
 	if b, err := exec.CommandContext(ctx, "journalctl", "--sync").CombinedOutput(); err != nil {
@@ -69,17 +69,17 @@ func TestLiveDisposableJournalSSHAttack(t *testing.T) {
 }
 
 func TestLiveDisposableInvalidCursorRecovery(t *testing.T) {
-	if os.Getenv("AEGIS_MONITOR_INTEGRATION") != "1" {
+	if os.Getenv("FORTMEND_MONITOR_INTEGRATION") != "1" {
 		t.Skip("requires marked disposable VM")
 	}
-	if _, err := os.Stat("/etc/aegis-disposable-integration"); err != nil {
+	if _, err := os.Stat("/etc/fortmend-disposable-integration"); err != nil {
 		t.Fatal(err)
 	}
 	if os.Geteuid() != 0 {
 		t.Fatal("journal integration requires root")
 	}
 	m := New(Config{StateDir: t.TempDir(), PersistencePaths: []string{}})
-	s := diskState{Cursor: "invalid-aegis-cursor", Files: map[string]string{}, Failures: map[string][]int64{}}
+	s := diskState{Cursor: "invalid-fortmend-cursor", Files: map[string]string{}, Failures: map[string][]int64{}}
 	if err := m.save(&s); err != nil {
 		t.Fatal(err)
 	}
@@ -98,7 +98,7 @@ func TestLiveDisposableInvalidCursorRecovery(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if !gap || stored.Cursor == "invalid-aegis-cursor" {
+	if !gap || stored.Cursor == "invalid-fortmend-cursor" {
 		t.Fatalf("actual journal cursor did not recover: gap=%v cursor=%q", gap, stored.Cursor)
 	}
 }

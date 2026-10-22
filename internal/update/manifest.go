@@ -8,7 +8,7 @@ import (
 	"time"
 )
 
-const SchemaVersion = "aegis.update/v1alpha1"
+const SchemaVersion = "fortmend.update/v1alpha1"
 
 type Artifact struct {
 	OS     string `json:"os"`
@@ -69,7 +69,7 @@ func Verify(signed SignedManifest, publicKey ed25519.PublicKey) error {
 func canonical(manifest Manifest) ([]byte, error) { return json.Marshal(manifest) }
 
 func validate(manifest Manifest) error {
-	if manifest.SchemaVersion != SchemaVersion || manifest.Version == "" || manifest.PublishedAt.IsZero() || len(manifest.Artifacts) == 0 {
+	if (manifest.SchemaVersion != SchemaVersion && manifest.SchemaVersion != "aegis.update/v1alpha1") || manifest.Version == "" || manifest.PublishedAt.IsZero() || len(manifest.Artifacts) == 0 {
 		return fmt.Errorf("invalid update manifest")
 	}
 	for _, artifact := range manifest.Artifacts {

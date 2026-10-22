@@ -7,7 +7,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/ErzenXz/aegis/internal/model"
+	"github.com/ErzenXz/fortmend/internal/model"
 )
 
 type Observation struct {

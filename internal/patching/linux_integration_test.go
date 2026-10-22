@@ -11,24 +11,24 @@ import (
 	"testing"
 	"time"
 
-	"github.com/ErzenXz/aegis/internal/sensors"
+	"github.com/ErzenXz/fortmend/internal/sensors"
 )
 
 // TestDisposableVMRealSecurityUpdates intentionally changes installed packages.
 // Never enable it on a real host. It requires both an explicit opt-in and a
 // marker created while provisioning a disposable Ubuntu/Debian test VM.
 func TestDisposableVMRealSecurityUpdates(t *testing.T) {
-	if os.Getenv("AEGIS_PATCHING_INTEGRATION") != "1" {
+	if os.Getenv("FORTMEND_PATCHING_INTEGRATION") != "1" {
 		t.Skip("requires disposable Linux VM and explicit opt-in")
 	}
 	if os.Geteuid() != 0 {
 		t.Fatal("integration test requires root in a disposable VM")
 	}
-	marker, err := os.ReadFile("/etc/aegis-disposable-integration")
-	if err != nil || strings.TrimSpace(string(marker)) != "aegis-disposable-security-update-test" {
+	marker, err := os.ReadFile("/etc/fortmend-disposable-integration")
+	if err != nil || strings.TrimSpace(string(marker)) != "fortmend-disposable-security-update-test" {
 		t.Fatal("disposable VM marker is missing")
 	}
-	state, err := os.MkdirTemp("/var/lib", "aegis-patching-test-")
+	state, err := os.MkdirTemp("/var/lib", "fortmend-patching-test-")
 	if err != nil {
 		t.Fatal(err)
 	}

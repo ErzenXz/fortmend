@@ -1,7 +1,7 @@
 {
-  "schemaVersion": "aegis.linux/v1",
+  "schemaVersion": "fortmend.linux/v1",
   "deviceId": "",
-  "stateDir": "/var/lib/aegis/protection",
+  "stateDir": "/var/lib/fortmend/protection",
   "pollSeconds": 5,
   "assessmentMinutes": 60,
   "securityUpdates": true,
@@ -12,7 +12,7 @@
   "ai": {
     "enabled": true,
     "mode": "full-control",
-    "binary": "/usr/local/bin/codex",
+    "binary": "/usr/local/lib/fortmend/codex",
     "workDir": "/"
   }
 }

@@ -17,7 +17,7 @@ import (
 	"path/filepath"
 	"time"
 
-	"github.com/ErzenXz/aegis/internal/secret"
+	"github.com/ErzenXz/fortmend/internal/secret"
 )
 
 type Authority struct {
@@ -37,7 +37,7 @@ func NewAuthority(commonName string, now time.Time) (*Authority, error) {
 	}
 	template := &x509.Certificate{
 		SerialNumber:          serial,
-		Subject:               pkix.Name{CommonName: commonName, Organization: []string{"Aegis"}},
+		Subject:               pkix.Name{CommonName: commonName, Organization: []string{"Fortmend"}},
 		NotBefore:             now.Add(-5 * time.Minute),
 		NotAfter:              now.AddDate(10, 0, 0),
 		KeyUsage:              x509.KeyUsageCertSign | x509.KeyUsageCRLSign | x509.KeyUsageDigitalSignature,
@@ -76,11 +76,12 @@ func (a *Authority) VerifyDeviceCertificate(certificate *x509.Certificate, now t
 	}); err != nil {
 		return "", err
 	}
-	const prefix = "aegis-device:"
-	if len(certificate.Subject.CommonName) <= len(prefix) || certificate.Subject.CommonName[:len(prefix)] != prefix {
-		return "", fmt.Errorf("invalid device certificate identity")
+	for _, prefix := range []string{"fortmend-device:", "aegis-device:"} {
+		if len(certificate.Subject.CommonName) > len(prefix) && certificate.Subject.CommonName[:len(prefix)] == prefix {
+			return certificate.Subject.CommonName[len(prefix):], nil
+		}
 	}
-	return certificate.Subject.CommonName[len(prefix):], nil
+	return "", fmt.Errorf("invalid device certificate identity")
 }
 
 func (a *Authority) Save(directory string) error {
@@ -143,14 +144,14 @@ func LoadAuthority(directory string) (*Authority, error) {
 }
 
 func (a *Authority) IssueServer(hosts []string, now time.Time) (tls.Certificate, error) {
-	return a.issue("aegis-hub", hosts, []x509.ExtKeyUsage{x509.ExtKeyUsageServerAuth}, now)
+	return a.issue("fortmend-hub", hosts, []x509.ExtKeyUsage{x509.ExtKeyUsageServerAuth}, now)
 }
 
 func (a *Authority) IssueDevice(deviceID string, now time.Time) (tls.Certificate, error) {
 	if deviceID == "" {
 		return tls.Certificate{}, fmt.Errorf("device id is required")
 	}
-	return a.issue("aegis-device:"+deviceID, nil, []x509.ExtKeyUsage{x509.ExtKeyUsageClientAuth}, now)
+	return a.issue("fortmend-device:"+deviceID, nil, []x509.ExtKeyUsage{x509.ExtKeyUsageClientAuth}, now)
 }
 
 func NewDeviceCSR(deviceID string) (keyPEM, csrPEM []byte, err error) {
@@ -162,7 +163,7 @@ func NewDeviceCSR(deviceID string) (keyPEM, csrPEM []byte, err error) {
 		return nil, nil, err
 	}
 	csrDER, err := x509.CreateCertificateRequest(rand.Reader, &x509.CertificateRequest{
-		Subject: pkix.Name{CommonName: "aegis-device:" + deviceID, Organization: []string{"Aegis"}},
+		Subject: pkix.Name{CommonName: "fortmend-device:" + deviceID, Organization: []string{"Fortmend"}},
 	}, key)
 	if err != nil {
 		return nil, nil, err
@@ -196,7 +197,7 @@ func (a *Authority) SignDeviceCSR(deviceID string, csrPEM []byte, now time.Time)
 	}
 	template := &x509.Certificate{
 		SerialNumber: serial,
-		Subject:      pkix.Name{CommonName: "aegis-device:" + deviceID, Organization: []string{"Aegis"}},
+		Subject:      pkix.Name{CommonName: "fortmend-device:" + deviceID, Organization: []string{"Fortmend"}},
 		NotBefore:    now.Add(-5 * time.Minute),
 		NotAfter:     now.AddDate(0, 3, 0),
 		KeyUsage:     x509.KeyUsageDigitalSignature,
@@ -220,7 +221,7 @@ func (a *Authority) issue(commonName string, hosts []string, usages []x509.ExtKe
 	}
 	template := &x509.Certificate{
 		SerialNumber: serial,
-		Subject:      pkix.Name{CommonName: commonName, Organization: []string{"Aegis"}},
+		Subject:      pkix.Name{CommonName: commonName, Organization: []string{"Fortmend"}},
 		NotBefore:    now.Add(-5 * time.Minute),
 		NotAfter:     now.AddDate(0, 3, 0),
 		KeyUsage:     x509.KeyUsageDigitalSignature,

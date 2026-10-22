@@ -10,11 +10,11 @@ import (
 	"sync"
 	"time"
 
-	"github.com/ErzenXz/aegis/internal/detection"
-	"github.com/ErzenXz/aegis/internal/model"
-	"github.com/ErzenXz/aegis/internal/pki"
-	"github.com/ErzenXz/aegis/internal/securitymcp"
-	"github.com/ErzenXz/aegis/internal/store"
+	"github.com/ErzenXz/fortmend/internal/detection"
+	"github.com/ErzenXz/fortmend/internal/model"
+	"github.com/ErzenXz/fortmend/internal/pki"
+	"github.com/ErzenXz/fortmend/internal/securitymcp"
+	"github.com/ErzenXz/fortmend/internal/store"
 )
 
 const maxEventBytes = 1024 * 1024
@@ -247,7 +247,7 @@ func (s *Server) publish(event model.SecurityEvent) {
 }
 
 func validateEvent(event model.SecurityEvent) error {
-	if event.SchemaVersion != model.SchemaVersion {
+	if !model.SupportsSchema(event.SchemaVersion) {
 		return fmt.Errorf("unsupported schemaVersion %q", event.SchemaVersion)
 	}
 	if event.ID == "" || event.DeviceID == "" || event.Source == "" || event.Kind == "" || event.ObservedAt.IsZero() {

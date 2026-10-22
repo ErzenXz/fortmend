@@ -11,12 +11,12 @@ import (
 	"testing"
 	"time"
 
-	"github.com/ErzenXz/aegis/internal/securitymcp"
-	"github.com/ErzenXz/aegis/internal/store"
+	"github.com/ErzenXz/fortmend/internal/securitymcp"
+	"github.com/ErzenXz/fortmend/internal/store"
 )
 
-func TestToolSurfaceContainsOnlyAegisSecurityTools(t *testing.T) {
-	db, err := store.Open(filepath.Join(t.TempDir(), "aegis.db"), store.Retention{RawEvents: 30 * 24 * time.Hour, Findings: 180 * 24 * time.Hour})
+func TestToolSurfaceContainsOnlyFortmendSecurityTools(t *testing.T) {
+	db, err := store.Open(filepath.Join(t.TempDir(), "fortmend.db"), store.Retention{RawEvents: 30 * 24 * time.Hour, Findings: 180 * 24 * time.Hour})
 	if err != nil {
 		t.Fatal(err)
 	}

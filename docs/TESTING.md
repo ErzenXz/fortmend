@@ -24,13 +24,13 @@ requests, extract personal credentials, or modify real applications.
 To smoke-test an installed official Codex CLI without login or inference:
 
 ```sh
-AEGIS_CODEX_SMOKE=1 go test -v ./internal/codexapp \
+FORTMEND_CODEX_SMOKE=1 go test -v ./internal/codexapp \
   -run '^TestOfficialAppServerAccountSmoke$'
 ```
 
 This creates a separate temporary profile and checks initialization, an empty
 account, effective configuration, and read-only thread creation. A live AI
-repair requires the official CLI on the target VM and `sudo aegis ai login`.
+repair requires the official CLI on the target VM and `sudo fortmend ai login`.
 
 ## Actual disposable VM runs
 
@@ -67,14 +67,14 @@ package transaction as proof that an entire host is uncompromised.
 
 Use disposable VMs only. Cross-compile individual test binaries for the VM
 architecture, copy them into the VM, and execute there. The real updater test
-requires root, `AEGIS_PATCHING_INTEGRATION=1`, and
-`/etc/aegis-disposable-integration` containing exactly
-`aegis-disposable-security-update-test`. It applies real security updates.
+requires root, `FORTMEND_PATCHING_INTEGRATION=1`, and
+`/etc/fortmend-disposable-integration` containing exactly
+`fortmend-disposable-security-update-test`. It applies real security updates.
 
 The live journal test requires root, the disposable marker, and
-`AEGIS_MONITOR_INTEGRATION=1`; it writes clearly identified test SSH records to
+`FORTMEND_MONITOR_INTEGRATION=1`; it writes clearly identified test SSH records to
 the journal. The live vendor scanner uses
-`AEGIS_VULNERABILITY_INTEGRATION=1` and contacts official vendor feeds. Ordinary
+`FORTMEND_VULNERABILITY_INTEGRATION=1` and contacts official vendor feeds. Ordinary
 test runs skip all three opt-in integrations.
 
 Keep VM console/recovery access. Destroy disposable VMs and their test images

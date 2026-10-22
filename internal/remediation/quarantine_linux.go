@@ -16,9 +16,9 @@ import (
 	"strings"
 	"time"
 
-	"github.com/ErzenXz/aegis/internal/model"
-	"github.com/ErzenXz/aegis/internal/monitor"
-	"github.com/ErzenXz/aegis/internal/sensors"
+	"github.com/ErzenXz/fortmend/internal/model"
+	"github.com/ErzenXz/fortmend/internal/monitor"
+	"github.com/ErzenXz/fortmend/internal/sensors"
 	"golang.org/x/sys/unix"
 )
 
@@ -47,7 +47,7 @@ func actionKey(event model.SecurityEvent, path string) string {
 }
 
 func successObservation(path, quarantinePath string, r receipt) sensors.Observation {
-	return sensors.Observation{Kind: "remediation.quarantined", Severity: model.SeverityHigh, Confidence: 1, DetectorIDs: []string{"aegis:verified-webshell-quarantine"}, Attributes: map[string]string{"path": path, "sha256": r.SHA256, "signature": r.Signature, "occurrenceId": r.OccurrenceID, "quarantinePath": quarantinePath, "receiptPath": filepath.Join(filepath.Dir(quarantinePath), "receipt.json"), "status": "contained", "hostClean": "false", "verification": "source-absent-and-evidence-hash-matched"}}
+	return sensors.Observation{Kind: "remediation.quarantined", Severity: model.SeverityHigh, Confidence: 1, DetectorIDs: []string{"fortmend:verified-webshell-quarantine"}, Attributes: map[string]string{"path": path, "sha256": r.SHA256, "signature": r.Signature, "occurrenceId": r.OccurrenceID, "quarantinePath": quarantinePath, "receiptPath": filepath.Join(filepath.Dir(quarantinePath), "receipt.json"), "status": "contained", "hostClean": "false", "verification": "source-absent-and-evidence-hash-matched"}}
 }
 
 // Resume a durable receipt after a duplicate delivery or a process crash
@@ -332,7 +332,7 @@ func (q *Quarantine) apply(ctx context.Context, event model.SecurityEvent, path 
 			r.Status = "restored_after_verification_failure"
 		}
 		receiptErr := writeReceipt(actionFD, r)
-		return sensors.Observation{Kind: "remediation.quarantine_failed", Severity: model.SeverityCritical, Confidence: 1, DetectorIDs: []string{"aegis:quarantine-verification"}, Attributes: map[string]string{"path": path, "quarantinePath": quarantinePath, "status": r.Status, "hostClean": "false"}}, errors.Join(cause, restoreErr, receiptErr)
+		return sensors.Observation{Kind: "remediation.quarantine_failed", Severity: model.SeverityCritical, Confidence: 1, DetectorIDs: []string{"fortmend:quarantine-verification"}, Attributes: map[string]string{"path": path, "quarantinePath": quarantinePath, "status": r.Status, "hostClean": "false"}}, errors.Join(cause, restoreErr, receiptErr)
 	}
 	var moved unix.Stat_t
 	if err := unix.Fstatat(actionFD, "payload", &moved, unix.AT_SYMLINK_NOFOLLOW); err != nil {
